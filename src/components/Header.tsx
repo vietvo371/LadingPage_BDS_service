@@ -23,8 +23,8 @@ export default function Header() {
 
         {/* Logo */}
         <div className="font-serif text-2xl font-bold tracking-widest">
-          <span className="text-white">COASTAL</span>
-          <span className="text-[#f0c84a]"> QN</span>
+          <span className="text-white">Trung</span>
+          <span className="text-[#f0c84a]"> Digital Media</span>
         </div>
 
         {/* Nav links */}
