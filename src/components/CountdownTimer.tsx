@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 
 // Ngày mở bán Giai đoạn 1
-const TARGET = new Date('2026-09-01T08:00:00')
+const TARGET = new Date('2026-06-27T08:00:00')
 
 function calc() {
   const diff = Math.max(0, TARGET.getTime() - Date.now())
@@ -68,7 +68,7 @@ export default function CountdownTimer() {
 
         <div className="ml-auto hidden sm:block text-right">
           <p className="text-[11px] text-[#aaa] mb-0.5">Ngày mở bán dự kiến</p>
-          <p className="font-bold text-[#1a1a1a] text-[15px]">01/09/2026</p>
+          <p className="font-bold text-[#1a1a1a] text-[15px]">27/06/2026</p>
           <a href="#lien-he"
             className="inline-block mt-2 bg-[#e06f46] hover:bg-[#c45a33] text-white
               text-[11px] font-bold px-3 py-1.5 rounded transition-colors tracking-wide">
