@@ -25,11 +25,9 @@ export default function Home() {
               <PropertyMain />
             </div>
 
-            {/* Sticky sidebar */}
-            <div className="lg:w-[380px] flex-shrink-0">
-              <ScrollReveal delay={0.2} direction="left">
-                <PropertySidebar />
-              </ScrollReveal>
+            {/* Sticky sidebar — sticky phải trực tiếp trên flex child */}
+            <div className="lg:w-[380px] flex-shrink-0 lg:sticky lg:top-[72px] lg:self-start lg:max-h-[calc(100vh-80px)] lg:overflow-y-auto no-scrollbar">
+              <PropertySidebar />
             </div>
           </div>
         </div>

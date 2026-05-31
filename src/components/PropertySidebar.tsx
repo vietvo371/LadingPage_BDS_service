@@ -14,7 +14,7 @@ export default function PropertySidebar() {
   }
 
   return (
-    <div className="lg:sticky lg:top-[72px]">
+    <div>
       {/* Agent card */}
       <div className="border-2 border-[#e06f46]/20 rounded-xl overflow-hidden mb-4 shadow-[0_4px_24px_rgba(224,111,70,0.12)]">
 
