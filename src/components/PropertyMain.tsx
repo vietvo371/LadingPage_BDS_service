@@ -5,7 +5,8 @@ import GalleryModal    from './GalleryModal'
 import CountdownTimer  from './CountdownTimer'
 import CounterStats    from './CounterStats'
 import ScrollReveal    from './ScrollReveal'
-import LocationMap     from './LocationMap'
+import LocationMap       from './LocationMap'
+import ViewLikeCounter  from './ViewLikeCounter'
 
 // ── Dùng ảnh render đẹp — bắt đầu từ 02 (bỏ spec sheet 01) ──
 const PHOTO_TABS = [
@@ -92,9 +93,12 @@ export default function PropertyMain() {
             57 NV · 36 NVS · 29 NQT · 25 NDL · 22 NCV · 24 BTSL · 11 BTDL · 8 BTBTL
           </span>
         </div>
-        <div className="flex flex-wrap gap-6 mt-3 text-[12px] text-[#888]">
-          <span>Cập nhật: ngày 30 tháng 05 năm 2026</span>
-          <span className="font-semibold text-[#e06f46]">MSCT#01</span>
+        <div className="flex flex-wrap items-center gap-4 mt-3">
+          <span className="text-[12px] text-[#888]">Cập nhật: ngày 30 tháng 05 năm 2026</span>
+          <span className="font-semibold text-[#e06f46] text-[12px]">MSCT#01</span>
+        </div>
+        <div className="mt-2">
+          <ViewLikeCounter />
         </div>
       </div>
 
