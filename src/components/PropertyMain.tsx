@@ -1,7 +1,10 @@
 'use client'
 import { useState } from 'react'
 import Image from 'next/image'
-import GalleryModal from './GalleryModal'
+import GalleryModal    from './GalleryModal'
+import CountdownTimer  from './CountdownTimer'
+import CounterStats    from './CounterStats'
+import ScrollReveal    from './ScrollReveal'
 
 // ── Dùng ảnh render đẹp — bắt đầu từ 02 (bỏ spec sheet 01) ──
 const PHOTO_TABS = [
@@ -73,6 +76,16 @@ export default function PropertyMain() {
           <span className="font-semibold text-[#e06f46]">MSCT#01</span>
         </div>
       </div>
+
+      {/* ── Countdown ── */}
+      <ScrollReveal delay={0.1}>
+        <CountdownTimer />
+      </ScrollReveal>
+
+      {/* ── Counter stats ── */}
+      <ScrollReveal delay={0.15}>
+        <CounterStats />
+      </ScrollReveal>
 
       {/* ── Photo tabs ── */}
       <div id="du-an" className="mb-6">
@@ -146,6 +159,7 @@ export default function PropertyMain() {
       </div>
 
       {/* ── Description ── */}
+      <ScrollReveal>
       <div className="border-t border-[#e5e5e5] pt-8 mb-8">
         <h2 className="text-xl font-bold text-[#1a1a1a] mb-5">Thông Tin Về Bất Động Sản</h2>
 
@@ -206,8 +220,10 @@ export default function PropertyMain() {
           <span className="bg-[#fdf0eb] text-[#e06f46] text-[12px] font-semibold px-3 py-1 rounded-full">resort living</span>
         </div>
       </div>
+      </ScrollReveal>
 
       {/* ── Amenities ── */}
+      <ScrollReveal delay={0.1}>
       <div id="tien-ich" className="border-t border-[#e5e5e5] pt-8 mb-8">
         <h2 className="text-xl font-bold text-[#1a1a1a] mb-6">Tiện Ích Dự Án</h2>
         <div className="space-y-6">
@@ -228,8 +244,10 @@ export default function PropertyMain() {
           ))}
         </div>
       </div>
+      </ScrollReveal>
 
       {/* ── Location ── */}
+      <ScrollReveal delay={0.1}>
       <div id="khu-vuc" className="border-t border-[#e5e5e5] pt-8">
         <h2 className="text-xl font-bold text-[#1a1a1a] mb-1">Khám Phá Khu Vực</h2>
         <div className="flex items-center justify-between mb-5">
@@ -267,6 +285,7 @@ export default function PropertyMain() {
           />
         </div>
       </div>
+      </ScrollReveal>
     </div>
   )
 }
