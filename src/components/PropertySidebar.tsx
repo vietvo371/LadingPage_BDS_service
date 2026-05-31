@@ -31,7 +31,7 @@ export default function PropertySidebar() {
           </div>
           <div className="flex-1 min-w-0">
             <p className="font-semibold text-[#1a1a1a] text-[14px]">Nguyễn Quốc Trung</p>
-            <p className="text-[#888] text-[12px]">Đội ngũ sản PGR</p>
+            <p className="text-[#888] text-[12px]">Đội ngũ sàn PQR</p>
           </div>
           <a href="tel:0365285863"
             className="bg-[#e06f46] hover:bg-[#c45a33] text-white text-[12px] font-semibold px-3 py-1.5 rounded transition-colors whitespace-nowrap">
@@ -43,7 +43,7 @@ export default function PropertySidebar() {
         <div className="grid grid-cols-2 divide-x divide-[#e5e5e5] border-b border-[#e5e5e5]">
           <div className="px-3 py-3 text-center">
             <p className="font-bold text-[#1a1a1a] text-lg">5</p>
-            <p className="text-[#888] text-[10px]">Số lượng booking</p>
+            <p className="text-[#888] text-[10px]">Booking</p>
           </div>
           <div className="px-3 py-3 text-center">
             <p className="font-bold text-[#1a1a1a] text-lg">2026</p>

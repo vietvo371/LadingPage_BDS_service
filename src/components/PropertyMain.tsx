@@ -38,11 +38,30 @@ const AMENITIES = [
   { cat: 'Thương Mại Dịch Vụ', items: ['Quảng trường biển','Quảng trường chợ nổi','Phố mua sắm ẩm thực','Trường liên cấp quốc tế','An ninh camera 24/7'] },
 ]
 
+function AmenityGroup({ cat, items }: { cat: string; items: string[] }) {
+  return (
+    <div>
+      <p className="text-[13px] font-semibold text-[#e06f46] uppercase tracking-wide mb-3">{cat}</p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
+        {items.map(item => (
+          <div key={item} className="flex items-start gap-2 text-[13px] text-[#444]">
+            <svg className="w-4 h-4 text-[#e06f46] flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+            {item}
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export default function PropertyMain() {
   const [activeTab, setActiveTab]   = useState(0)
   const [galleryOpen, setGalleryOpen] = useState(false)
   const [galleryCat,  setGalleryCat]  = useState('all')
-  const [showMore,    setShowMore]    = useState(false)
+  const [showMore,       setShowMore]       = useState(false)
+  const [showMoreTienIch, setShowMoreTienIch] = useState(false)
 
   const openGallery = (catId: string) => {
     setGalleryCat(catId)
@@ -248,21 +267,29 @@ export default function PropertyMain() {
       <div id="tien-ich" className="border-t border-[#e5e5e5] pt-8 mb-8">
         <h2 className="text-xl font-bold text-[#1a1a1a] mb-6">Tiện Ích Dự Án</h2>
         <div className="space-y-6">
-          {AMENITIES.map(({ cat, items }) => (
-            <div key={cat}>
-              <p className="text-[13px] font-semibold text-[#e06f46] uppercase tracking-wide mb-3">{cat}</p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
-                {items.map(item => (
-                  <div key={item} className="flex items-start gap-2 text-[13px] text-[#444]">
-                    <svg className="w-4 h-4 text-[#e06f46] flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                    </svg>
-                    {item}
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
+          {/* Category đầu tiên luôn hiển thị */}
+          <AmenityGroup cat={AMENITIES[0].cat} items={AMENITIES[0].items} />
+
+          {/* Các category còn lại — toggle */}
+          <div className={`space-y-6 overflow-hidden transition-all duration-500 ${showMoreTienIch ? '' : 'max-h-0'}`}>
+            {AMENITIES.slice(1).map(({ cat, items }) => (
+              <AmenityGroup key={cat} cat={cat} items={items} />
+            ))}
+          </div>
+
+          {/* Nút Xem thêm */}
+          <button
+            onClick={() => setShowMoreTienIch(v => !v)}
+            className="flex items-center gap-2 text-[13px] font-semibold text-[#e06f46] hover:text-[#c45a33] transition-colors mt-2"
+          >
+            <span>{showMoreTienIch ? 'Thu gọn' : 'Xem thêm tiện ích'}</span>
+            <svg
+              className={`w-4 h-4 transition-transform duration-300 ${showMoreTienIch ? 'rotate-180' : ''}`}
+              fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
         </div>
       </div>
       </ScrollReveal>
@@ -279,7 +306,7 @@ export default function PropertyMain() {
             Ven biển Nghĩa An, Xã Tư Nghĩa, Tỉnh Quảng Ngãi
           </p>
           <a
-            href="https://www.google.com/maps/place/Nghĩa+An,+Tư+Nghĩa,+Quảng+Ngãi/@15.1,-108.8,13z"
+            href="https://maps.app.goo.gl/fayQMvikCVXt9iYf6"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-1.5 text-[#e06f46] text-[12px] font-semibold
@@ -302,7 +329,7 @@ export default function PropertyMain() {
             loading="lazy"
             allowFullScreen
             referrerPolicy="no-referrer-when-downgrade"
-            src="https://maps.google.com/maps?q=Tư+Nghĩa,+Quảng+Ngãi,+Việt+Nam&t=&z=13&ie=UTF8&iwloc=&output=embed"
+            src="https://maps.google.com/maps?q=https://maps.app.goo.gl/fayQMvikCVXt9iYf6&output=embed&z=16&ie=UTF8&iwloc=&t=k"
           />
         </div>
       </div>
