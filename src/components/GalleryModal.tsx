@@ -122,8 +122,12 @@ type Props = {
 }
 
 export default function GalleryModal({ open, onClose, defaultCategory = 'all' }: Props) {
-  const [activeId, setActiveId]   = useState(defaultCategory)
-  const [lightbox, setLightbox]   = useState<{ photos: typeof ALL_PHOTOS; idx: number } | null>(null)
+  const [activeId,       setActiveId]       = useState(defaultCategory)
+  const [lightbox,       setLightbox]       = useState<{ photos: typeof ALL_PHOTOS; idx: number } | null>(null)
+  const [showContact,    setShowContact]    = useState(false)
+  const [formSent,       setFormSent]       = useState(false)
+  const [seenCount,      setSeenCount]      = useState(0)
+  const [formData,       setFormData]       = useState({ name: '', phone: '' })
 
   // Close on Escape
   useEffect(() => {
@@ -147,6 +151,23 @@ export default function GalleryModal({ open, onClose, defaultCategory = 'all' }:
     else document.body.style.overflow = ''
     return () => { document.body.style.overflow = '' }
   }, [open])
+
+  // Track ảnh đã xem — hiện form khi đủ 43 ảnh
+  useEffect(() => {
+    if (!lightbox) return
+    setSeenCount(c => {
+      const next = c + 1
+      if (next >= TOTAL && !showContact) setTimeout(() => setShowContact(true), 600)
+      return next
+    })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lightbox?.idx])
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    console.log('Gallery lead:', formData)
+    setFormSent(true)
+  }
 
   if (!open) return null
 
@@ -339,6 +360,82 @@ export default function GalleryModal({ open, onClose, defaultCategory = 'all' }:
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Form popup sau khi xem hết ảnh ── */}
+      {showContact && !formSent && (
+        <div className="fixed inset-0 z-[400] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div
+            className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden"
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="relative bg-gradient-to-br from-[#e06f46] to-[#c45a33] px-6 pt-6 pb-8 text-white">
+              <button
+                onClick={() => setShowContact(false)}
+                className="absolute top-4 right-4 w-7 h-7 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors"
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
+                  <path d="M18 6L6 18M6 6l12 12"/>
+                </svg>
+              </button>
+              <div className="text-2xl mb-2">🎉</div>
+              <h3 className="font-bold text-[17px] leading-snug">Bạn đã xem hết {TOTAL} ảnh!</h3>
+              <p className="text-white/80 text-[13px] mt-1.5 leading-relaxed">
+                Để lại thông tin để nhận tư vấn riêng và ưu đãi đặt chỗ sớm nhất.
+              </p>
+            </div>
+
+            {/* Form */}
+            <form onSubmit={handleFormSubmit} className="px-6 py-5 space-y-3 -mt-4 relative">
+              <div className="bg-white rounded-xl shadow-[0_-4px_20px_rgba(0,0,0,0.06)] p-4 space-y-3">
+                <input
+                  required
+                  placeholder="Họ và tên *"
+                  value={formData.name}
+                  onChange={e => setFormData(d => ({ ...d, name: e.target.value }))}
+                  className="w-full border border-[#e5e5e5] rounded-lg px-4 py-2.5 text-[13px]
+                    focus:outline-none focus:border-[#e06f46] transition-colors"
+                />
+                <input
+                  required type="tel"
+                  placeholder="Số điện thoại *"
+                  value={formData.phone}
+                  onChange={e => setFormData(d => ({ ...d, phone: e.target.value }))}
+                  className="w-full border border-[#e5e5e5] rounded-lg px-4 py-2.5 text-[13px]
+                    focus:outline-none focus:border-[#e06f46] transition-colors"
+                />
+                <button type="submit"
+                  className="w-full bg-[#e06f46] hover:bg-[#c45a33] text-white py-3 rounded-lg
+                    text-[13px] font-bold tracking-wide transition-colors">
+                  Nhận Tư Vấn Ngay — Miễn Phí
+                </button>
+                <p className="text-center text-[11px] text-[#aaa]">🔒 Thông tin bảo mật tuyệt đối</p>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Success sau khi submit */}
+      {showContact && formSent && (
+        <div className="fixed inset-0 z-[400] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-xs p-8 text-center">
+            <div className="w-14 h-14 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
+              <svg className="w-7 h-7 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/>
+              </svg>
+            </div>
+            <h3 className="font-bold text-[17px] text-[#1a1a1a] mb-2">Đăng ký thành công!</h3>
+            <p className="text-[#888] text-[13px] mb-5 leading-relaxed">
+              Tư vấn viên sẽ liên hệ bạn trong <span className="text-[#e06f46] font-semibold">30 phút</span> làm việc.
+            </p>
+            <button onClick={() => { setShowContact(false); onClose() }}
+              className="bg-[#e06f46] text-white px-8 py-2.5 rounded-lg text-[13px] font-bold hover:bg-[#c45a33] transition-colors">
+              Đóng
+            </button>
           </div>
         </div>
       )}
