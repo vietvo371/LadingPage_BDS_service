@@ -3,11 +3,24 @@ import { useState } from 'react'
 
 export default function ContactForm() {
   const [open, setOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
+    setLoading(true)
     const data = Object.fromEntries(new FormData(e.currentTarget))
-    console.log('Lead:', data)
+    
+    try {
+      await fetch('/api/lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ source: 'Contact Form', ...data }),
+      })
+    } catch (error) {
+      console.error('Error submitting form:', error)
+    }
+
+    setLoading(false)
     setOpen(true)
     ;(e.target as HTMLFormElement).reset()
   }
@@ -147,10 +160,11 @@ export default function ContactForm() {
               {/* Submit */}
               <button
                 type="submit"
+                disabled={loading}
                 className="w-full bg-[#c9a870] text-[#0b0e12] py-4 text-[10px] font-bold tracking-[3px] uppercase
-                  hover:bg-[#dfc090] transition-colors duration-300 mt-2"
+                  hover:bg-[#dfc090] transition-colors duration-300 mt-2 disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                Đăng Ký Ngay — Miễn Phí
+                {loading ? 'Đang xử lý...' : 'Đăng Ký Ngay — Miễn Phí'}
               </button>
 
               <p className="text-white/15 text-[10px] text-center font-sans tracking-wide">

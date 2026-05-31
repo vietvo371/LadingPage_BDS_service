@@ -4,10 +4,25 @@ import Image from 'next/image'
 
 export default function PropertySidebar() {
   const [sent, setSent] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [tab, setTab] = useState<'message'|'booking'>('message')
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
+    setLoading(true)
+    const data = Object.fromEntries(new FormData(e.currentTarget))
+    
+    try {
+      await fetch('/api/lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ source: `Sidebar - ${tab}`, ...data }),
+      })
+    } catch (error) {
+      console.error('Error submitting form:', error)
+    }
+
+    setLoading(false)
     setSent(true)
     setTimeout(() => setSent(false), 4000)
     ;(e.target as HTMLFormElement).reset()
@@ -88,9 +103,9 @@ export default function PropertySidebar() {
                     className="w-full border border-[#ddd] rounded px-3 py-2.5 text-[13px] focus:outline-none focus:border-[#e06f46] transition-colors" />
                   <textarea name="message" rows={3} placeholder="Tin nhắn của bạn..."
                     className="w-full border border-[#ddd] rounded px-3 py-2.5 text-[13px] focus:outline-none focus:border-[#e06f46] transition-colors resize-none" />
-                  <button type="submit"
-                    className="w-full bg-[#e06f46] hover:bg-[#c45a33] text-white py-3 text-[13px] font-semibold rounded transition-colors">
-                    Gửi Tin Nhắn
+                  <button type="submit" disabled={loading}
+                    className="w-full bg-[#e06f46] hover:bg-[#c45a33] text-white py-3 text-[13px] font-semibold rounded transition-colors disabled:opacity-70 disabled:cursor-not-allowed">
+                    {loading ? 'Đang gửi...' : 'Gửi Tin Nhắn'}
                   </button>
                 </form>
               )}
@@ -112,9 +127,9 @@ export default function PropertySidebar() {
                 <option>Tham quan thực tế</option>
                 <option>Tham quan trực tuyến (Online)</option>
               </select>
-              <button type="submit"
-                className="w-full bg-[#e06f46] hover:bg-[#c45a33] text-white py-3 text-[13px] font-semibold rounded transition-colors">
-                Đặt Lịch Tham Quan
+              <button type="submit" disabled={loading}
+                className="w-full bg-[#e06f46] hover:bg-[#c45a33] text-white py-3 text-[13px] font-semibold rounded transition-colors disabled:opacity-70 disabled:cursor-not-allowed">
+                {loading ? 'Đang gửi...' : 'Đặt Lịch Tham Quan'}
               </button>
             </form>
           )}

@@ -12,43 +12,57 @@ export default function ViewLikeCounter() {
   const [bounce, setBounce] = useState(false)
 
   useEffect(() => {
-    // Tăng views mỗi lần vào trang (giới hạn 1 lần/session)
+    // 1. Fetch current stats
+    fetch('/api/stats')
+      .then(res => res.json())
+      .then(data => {
+        setViews(data.views || BASE_VIEWS)
+        setLikes(data.likes || BASE_LIKES)
+      })
+      .catch(err => console.error('Error fetching stats:', err))
+
+    // 2. Tăng views mỗi lần vào trang (giới hạn 1 lần/session)
     const viewed = sessionStorage.getItem('coastal_viewed')
     if (!viewed) {
-      const stored = parseInt(localStorage.getItem('coastal_views') || String(BASE_VIEWS))
-      const next   = stored + 1
-      localStorage.setItem('coastal_views', String(next))
+      fetch('/api/stats?action=view', { method: 'POST' })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success && !data.fake) setViews(data.value)
+        })
+        .catch(err => console.error('Error incrementing view:', err))
       sessionStorage.setItem('coastal_viewed', '1')
-      setViews(next)
-    } else {
-      const stored = parseInt(localStorage.getItem('coastal_views') || String(BASE_VIEWS))
-      setViews(stored)
     }
 
-    // Check liked
+    // Check liked local state
     const isLiked = localStorage.getItem('coastal_liked') === '1'
-    const storedLikes = parseInt(localStorage.getItem('coastal_likes') || String(BASE_LIKES))
     setLiked(isLiked)
-    setLikes(storedLikes)
   }, [])
 
-  const handleLike = () => {
+  const handleLike = async () => {
     if (liked) {
       // Unlike
-      const next = likes - 1
-      setLikes(next)
       setLiked(false)
+      setLikes(prev => prev - 1)
       localStorage.setItem('coastal_liked', '0')
-      localStorage.setItem('coastal_likes', String(next))
+      
+      try {
+        await fetch('/api/stats?action=unlike', { method: 'POST' })
+      } catch (error) {
+        console.error('Error unliking:', error)
+      }
     } else {
       // Like + bounce animation
-      const next = likes + 1
-      setLikes(next)
       setLiked(true)
+      setLikes(prev => prev + 1)
       setBounce(true)
       setTimeout(() => setBounce(false), 600)
       localStorage.setItem('coastal_liked', '1')
-      localStorage.setItem('coastal_likes', String(next))
+      
+      try {
+        await fetch('/api/stats?action=like', { method: 'POST' })
+      } catch (error) {
+        console.error('Error liking:', error)
+      }
     }
   }
 
