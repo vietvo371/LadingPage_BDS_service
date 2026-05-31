@@ -42,6 +42,7 @@ export default function PropertyMain() {
   const [activeTab, setActiveTab]   = useState(0)
   const [galleryOpen, setGalleryOpen] = useState(false)
   const [galleryCat,  setGalleryCat]  = useState('all')
+  const [showMore,    setShowMore]    = useState(false)
 
   const openGallery = (catId: string) => {
     setGalleryCat(catId)
@@ -192,26 +193,46 @@ export default function PropertyMain() {
             </ul>
           </div>
 
-          <div>
-            <p className="font-semibold text-[#1a1a1a] mb-3">Giải Mã Sức Hút Của Coastal Quảng Ngãi:</p>
-            <div className="space-y-3">
-              {[
-                ['1. Vị Trí Kim Cương – Kết Nối Tinh Hoa', 'Kết nối trực tiếp đến bờ biển Mỹ Khê tuyệt đẹp và trung tâm TP. Quảng Ngãi thông qua Cầu Cửa Đại. Không chỉ mở ra không gian sống như một khu nghỉ dưỡng tại gia mà còn là thỏi nam châm thu hút dòng chảy giao thương mạnh mẽ.'],
-                ['2. Không Gian Sống Chất Lành', 'Với mật độ xây dựng cực thấp, Coastal Quảng Ngãi kiến tạo một màng xanh không lây ngay cửa biển. Giúp cư dân tận hưởng bầu không khí trong lành, tách biệt khỏi ồn ào khói bụi nhưng vẫn kết nối nhịp sống tiện nghi.'],
-                ['3. Bảo Chứng Đầu Tư – Pháp Lý Vững Chắc', 'Giữa những biến động của thị trường, dự án mang đến an tâm tuyệt đối với sổ đỏ sở hữu lâu dài. Không chỉ là nơi an cư lý tưởng mà còn là "tài sản truyền đời".'],
-                ['4. Chính Sách Bán Hàng Ưu Việt', 'Các chính sách thanh toán ưu đãi từ Chủ đầu tư, hỗ trợ hợp đồng điều dụng, hạn mức mang đến những đặc quyền tối ưu và dễ dàng nhất cho nhà đầu tư tiềm năng.'],
-              ].map(([title, content]) => (
-                <div key={title as string}>
-                  <p className="font-medium text-[#1a1a1a]">{title}</p>
-                  <p className="text-[#555] mt-1">{content}</p>
+          {/* Expandable: Giải Mã Sức Hút */}
+          <div className={`relative overflow-hidden transition-all duration-500 ${showMore ? '' : 'max-h-0'}`}>
+            <div className="space-y-4">
+              <div>
+                <p className="font-semibold text-[#1a1a1a] mb-3">Giải Mã Sức Hút Của Coastal Quảng Ngãi:</p>
+                <div className="space-y-3">
+                  {[
+                    ['1. Vị Trí Kim Cương – Kết Nối Tinh Hoa', 'Kết nối trực tiếp đến bờ biển Mỹ Khê tuyệt đẹp và trung tâm TP. Quảng Ngãi thông qua Cầu Cửa Đại. Không chỉ mở ra không gian sống như một khu nghỉ dưỡng tại gia mà còn là thỏi nam châm thu hút dòng chảy giao thương mạnh mẽ.'],
+                    ['2. Không Gian Sống Chất Lành', 'Với mật độ xây dựng cực thấp, Coastal Quảng Ngãi kiến tạo một màng xanh không lây ngay cửa biển. Giúp cư dân tận hưởng bầu không khí trong lành, tách biệt khỏi ồn ào khói bụi nhưng vẫn kết nối nhịp sống tiện nghi.'],
+                    ['3. Bảo Chứng Đầu Tư – Pháp Lý Vững Chắc', 'Giữa những biến động của thị trường, dự án mang đến an tâm tuyệt đối với sổ đỏ sở hữu lâu dài. Không chỉ là nơi an cư lý tưởng mà còn là "tài sản truyền đời".'],
+                    ['4. Chính Sách Bán Hàng Ưu Việt', 'Các chính sách thanh toán ưu đãi từ Chủ đầu tư, hỗ trợ hợp đồng điều dụng, hạn mức mang đến những đặc quyền tối ưu và dễ dàng nhất cho nhà đầu tư tiềm năng.'],
+                  ].map(([title, content]) => (
+                    <div key={title as string}>
+                      <p className="font-medium text-[#1a1a1a]">{title}</p>
+                      <p className="text-[#555] mt-1">{content}</p>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
+
+              <p className="font-medium text-[#e06f46] italic">
+                Coastal Quảng Ngãi – Không chỉ là nơi để trở về, mà còn là di sản kiêu hãnh định riêng cho cộng đồng tinh hoa!
+              </p>
             </div>
           </div>
 
-          <p className="font-medium text-[#e06f46] italic">
-            Coastal Quảng Ngãi – Không chỉ là nơi để trở về, mà còn là di sản kiêu hãnh định riêng cho cộng đồng tinh hoa!
-          </p>
+          {/* Nút Xem thêm / Thu gọn */}
+          <button
+            onClick={() => setShowMore(v => !v)}
+            className="flex items-center gap-2 text-[13px] font-semibold text-[#e06f46]
+              hover:text-[#c45a33] transition-colors group mt-1"
+          >
+            <span>{showMore ? 'Thu gọn' : 'Xem thêm'}</span>
+            <svg
+              className={`w-4 h-4 transition-transform duration-300 ${showMore ? 'rotate-180' : ''}`}
+              fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
         </div>
 
         {/* Type badge */}
