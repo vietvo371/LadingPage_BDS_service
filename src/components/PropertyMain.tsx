@@ -221,11 +221,11 @@ export default function PropertyMain() {
           {/* Quote highlight box */}
           <div className="border-l-4 border-[#e06f46] bg-[#fdf6f3] px-5 py-4 rounded-r-lg">
             <p className="text-[#c45a33] font-semibold italic text-[14px] leading-relaxed">
-              "Khởi nguồn từ khát vọng kiến tạo một biểu tượng sống mới, Coastal Quảng Ngãi mang đến độc quyền sống tinh hoa – nơi thiên nhiên khoáng đạt giao hòa cùng nhịp giao thương sầm uất ngay trung tâm thành phố."
+              "Khởi nguồn từ khát vọng kiến tạo một biểu tượng sống mới, Coastal Quảng Ngãi mang đến đặc quyền sống tinh hoa – nơi thiên nhiên khoáng đạt giao hòa cùng nhịp giao thương sầm uất ngay trung tâm thành phố."
             </p>
           </div>
           <p>
-            Dưới bàn tay tài huyết của Chủ đầu tư Haus Quảng Ngãi, dự án tự hào là khu đô thị sinh thái biển tiên phong sở hữu tọa độ vàng <strong>"Kẻ giang – Cận hải"</strong> vô cùng hiếm có. Tại đây, mỗi ngày trôi qua là một trải nghiệm sống chuẩn mực bên bờ sông Trà Khúc thơ mộng, quyện cùng bởi thế tươi mát của doi dương bao la.
+            Dưới bàn tay tâm huyết của Chủ đầu tư Haus Quảng Ngãi, dự án tự hào là khu đô thị sinh thái biển tiên phong sở hữu tọa độ vàng <strong>"Kề giang – Cận hải"</strong> vô cùng hiếm có. Tại đây, mỗi ngày trôi qua là một trải nghiệm sống chuẩn mực bên bờ sông Trà Khúc thơ mộng, quyện cùng hơi thở tươi mát của đại dương bao la.
           </p>
 
           <div>
