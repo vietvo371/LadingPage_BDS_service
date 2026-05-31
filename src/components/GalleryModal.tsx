@@ -273,6 +273,65 @@ export default function GalleryModal({ open, onClose, defaultCategory = 'all' }:
               </div>
             </div>
           ))}
+
+          {/* ── Form card cuối grid — hiện sau khi lướt hết ảnh ── */}
+          {activeId === 'all' && (
+            <div className="mt-8 mb-4 rounded-2xl overflow-hidden border border-[#f0d5c8] shadow-sm">
+              {!formSent ? (
+                <div>
+                  {/* Header cam */}
+                  <div className="bg-gradient-to-r from-[#e06f46] to-[#c45a33] px-6 py-5 text-white">
+                    <p className="text-white/70 text-[11px] tracking-[3px] uppercase mb-1">Bạn đã xem hết {TOTAL} ảnh</p>
+                    <h3 className="font-bold text-[18px]">🎉 Quan tâm đến Coastal Quảng Ngãi?</h3>
+                    <p className="text-white/80 text-[13px] mt-1 leading-relaxed">
+                      Để lại thông tin — nhận tư vấn riêng và ưu đãi đặt chỗ sớm nhất.
+                    </p>
+                  </div>
+                  {/* Form */}
+                  <div className="bg-[#fdf6f3] px-6 py-5">
+                    <form onSubmit={handleFormSubmit} className="flex flex-col sm:flex-row gap-3 items-end">
+                      <div className="flex-1 space-y-2.5">
+                        <input
+                          required
+                          placeholder="Họ và tên *"
+                          value={formData.name}
+                          onChange={e => setFormData(d => ({ ...d, name: e.target.value }))}
+                          className="w-full border border-[#e5e5e5] bg-white rounded-lg px-4 py-2.5 text-[13px]
+                            focus:outline-none focus:border-[#e06f46] transition-colors"
+                        />
+                        <input
+                          required type="tel"
+                          placeholder="Số điện thoại *"
+                          value={formData.phone}
+                          onChange={e => setFormData(d => ({ ...d, phone: e.target.value }))}
+                          className="w-full border border-[#e5e5e5] bg-white rounded-lg px-4 py-2.5 text-[13px]
+                            focus:outline-none focus:border-[#e06f46] transition-colors"
+                        />
+                      </div>
+                      <button type="submit"
+                        className="bg-[#e06f46] hover:bg-[#c45a33] text-white px-6 py-2.5 rounded-lg
+                          text-[13px] font-bold tracking-wide transition-colors whitespace-nowrap sm:mb-0">
+                        Nhận Tư Vấn →
+                      </button>
+                    </form>
+                    <p className="text-[11px] text-[#aaa] mt-2.5">🔒 Thông tin bảo mật tuyệt đối</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="bg-[#fdf6f3] px-6 py-8 text-center">
+                  <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-3">
+                    <svg className="w-6 h-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/>
+                    </svg>
+                  </div>
+                  <h3 className="font-bold text-[16px] text-[#1a1a1a] mb-1">Đăng ký thành công!</h3>
+                  <p className="text-[#888] text-[13px]">
+                    Tư vấn viên sẽ liên hệ trong <span className="text-[#e06f46] font-semibold">30 phút</span> làm việc.
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
