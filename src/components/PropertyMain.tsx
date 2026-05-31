@@ -5,6 +5,7 @@ import GalleryModal    from './GalleryModal'
 import CountdownTimer  from './CountdownTimer'
 import CounterStats    from './CounterStats'
 import ScrollReveal    from './ScrollReveal'
+import LocationMap     from './LocationMap'
 
 // ── Dùng ảnh render đẹp — bắt đầu từ 02 (bỏ spec sheet 01) ──
 const PHOTO_TABS = [
@@ -294,45 +295,9 @@ export default function PropertyMain() {
       </div>
       </ScrollReveal>
 
-      {/* ── Location ── */}
+      {/* ── Location — kiểu BĐS chuyên nghiệp ── */}
       <ScrollReveal delay={0.1}>
-      <div id="khu-vuc" className="border-t border-[#e5e5e5] pt-8">
-        <h2 className="text-xl font-bold text-[#1a1a1a] mb-1">Khám Phá Khu Vực</h2>
-        <div className="flex items-center justify-between mb-5">
-          <p className="text-[14px] text-[#666] flex items-center gap-1.5">
-            <svg className="w-3.5 h-3.5 text-[#e06f46] flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-            </svg>
-            Ven biển Nghĩa An, Xã Tư Nghĩa, Tỉnh Quảng Ngãi
-          </p>
-          <a
-            href="https://maps.app.goo.gl/fayQMvikCVXt9iYf6"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1.5 text-[#e06f46] text-[12px] font-semibold
-              hover:underline underline-offset-2 whitespace-nowrap flex-shrink-0"
-          >
-            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-            </svg>
-            Mở Google Maps
-          </a>
-        </div>
-
-        {/* Google Maps embed — Tư Nghĩa, Quảng Ngãi */}
-        <div className="w-full rounded-xl overflow-hidden border border-[#e5e5e5] shadow-sm" style={{ height: 380 }}>
-          <iframe
-            title="Vị trí Coastal Quảng Ngãi"
-            width="100%"
-            height="100%"
-            style={{ border: 0 }}
-            loading="lazy"
-            allowFullScreen
-            referrerPolicy="no-referrer-when-downgrade"
-            src="https://maps.google.com/maps?q=https://maps.app.goo.gl/fayQMvikCVXt9iYf6&output=embed&z=16&ie=UTF8&iwloc=&t=k"
-          />
-        </div>
-      </div>
+        <LocationMap />
       </ScrollReveal>
     </div>
   )
