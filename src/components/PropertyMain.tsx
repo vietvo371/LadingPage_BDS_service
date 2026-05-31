@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import Image from 'next/image'
 import GalleryModal    from './GalleryModal'
 import CountdownTimer  from './CountdownTimer'
@@ -11,14 +11,14 @@ import ViewLikeCounter  from './ViewLikeCounter'
 // ── Dùng ảnh render đẹp — bắt đầu từ 02 (bỏ spec sheet 01) ──
 const PHOTO_TABS = [
   { label: 'Tất Cả',           catId: 'all',           folder: null,                     start: 2, count: 0  },
-  { label: 'Dinh Thự Trị Liệu',catId: 'dinh-thu',      folder: 'dinh-thu-tri-lieu',      start: 2, count: 6  },
-  { label: 'Biệt Thự Đơn Lập', catId: 'biet-thu-don',  folder: 'biet-thu-bien-don-lap',  start: 2, count: 6  },
-  { label: 'Biệt Thự Song Lập',catId: 'biet-thu-song', folder: 'biet-thu-bien-song-lap', start: 2, count: 6  },
-  { label: 'Nhà Công Viên',    catId: 'cong-vien',     folder: 'nha-cong-vien',          start: 2, count: 6  },
-  { label: 'Nhà Quảng Trường', catId: 'quang-truong',  folder: 'nha-quang-truong',       start: 2, count: 5  },
-  { label: 'Nhà Đại Lộ',      catId: 'dai-lo',        folder: 'nha-dai-lo',             start: 2, count: 4  },
-  { label: 'Nhà Ven Sông',     catId: 'ven-song',      folder: 'nha-ven-song',           start: 2, count: 5  },
   { label: 'Nhà Vườn',        catId: 'nha-vuon',      folder: 'nha-vuon',               start: 4, count: 4  },
+  { label: 'Nhà Ven Sông',     catId: 'ven-song',      folder: 'nha-ven-song',           start: 2, count: 5  },
+  { label: 'Nhà Đại Lộ',      catId: 'dai-lo',        folder: 'nha-dai-lo',             start: 2, count: 4  },
+  { label: 'Nhà Quảng Trường', catId: 'quang-truong',  folder: 'nha-quang-truong',       start: 2, count: 5  },
+  { label: 'Nhà Công Viên',    catId: 'cong-vien',     folder: 'nha-cong-vien',          start: 2, count: 6  },
+  { label: 'Biệt Thự Song Lập',catId: 'biet-thu-song', folder: 'biet-thu-bien-song-lap', start: 2, count: 6  },
+  { label: 'Biệt Thự Đơn Lập', catId: 'biet-thu-don',  folder: 'biet-thu-bien-don-lap',  start: 2, count: 6  },
+  { label: 'Dinh Thự Trị Liệu',catId: 'dinh-thu',      folder: 'dinh-thu-tri-lieu',      start: 2, count: 6  },
 ]
 
 // Preview grid — 9 ảnh đẹp nhất cho tab "Tất Cả"
@@ -59,11 +59,32 @@ function AmenityGroup({ cat, items }: { cat: string; items: string[] }) {
 }
 
 export default function PropertyMain() {
-  const [activeTab, setActiveTab]   = useState(0)
+  const [activeTab, setActiveTab]     = useState(0)
   const [galleryOpen, setGalleryOpen] = useState(false)
   const [galleryCat,  setGalleryCat]  = useState('all')
   const [showMore,       setShowMore]       = useState(false)
   const [showMoreTienIch, setShowMoreTienIch] = useState(false)
+
+  // Drag scroll cho tab bar
+  const tabRef   = useRef<HTMLDivElement>(null)
+  const dragRef  = useRef({ isDragging: false, startX: 0, scrollLeft: 0 })
+
+  const onMouseDown = (e: React.MouseEvent) => {
+    const el = tabRef.current; if (!el) return
+    dragRef.current = { isDragging: true, startX: e.pageX - el.offsetLeft, scrollLeft: el.scrollLeft }
+    el.style.cursor = 'grabbing'
+  }
+  const onMouseMove = (e: React.MouseEvent) => {
+    const el = tabRef.current; if (!el || !dragRef.current.isDragging) return
+    e.preventDefault()
+    const x    = e.pageX - el.offsetLeft
+    const walk = (x - dragRef.current.startX) * 1.5
+    el.scrollLeft = dragRef.current.scrollLeft - walk
+  }
+  const onMouseUp = () => {
+    dragRef.current.isDragging = false
+    if (tabRef.current) tabRef.current.style.cursor = 'grab'
+  }
 
   const openGallery = (catId: string) => {
     setGalleryCat(catId)
@@ -114,7 +135,15 @@ export default function PropertyMain() {
 
       {/* ── Photo tabs ── */}
       <div id="du-an" className="mb-6">
-        <div className="overflow-x-auto no-scrollbar -mx-1 pb-1">
+        <div
+          ref={tabRef}
+          className="overflow-x-auto no-scrollbar -mx-1 pb-1 cursor-grab select-none"
+          style={{ WebkitOverflowScrolling: 'touch' }}
+          onMouseDown={onMouseDown}
+          onMouseMove={onMouseMove}
+          onMouseUp={onMouseUp}
+          onMouseLeave={onMouseUp}
+        >
           <div className="flex gap-2 min-w-max px-1">
             {PHOTO_TABS.map((tab, i) => (
               <button

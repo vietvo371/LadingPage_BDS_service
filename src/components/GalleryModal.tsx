@@ -122,12 +122,10 @@ type Props = {
 }
 
 export default function GalleryModal({ open, onClose, defaultCategory = 'all' }: Props) {
-  const [activeId,       setActiveId]       = useState(defaultCategory)
-  const [lightbox,       setLightbox]       = useState<{ photos: typeof ALL_PHOTOS; idx: number } | null>(null)
-  const [showContact,    setShowContact]    = useState(false)
-  const [formSent,       setFormSent]       = useState(false)
-  const [seenCount,      setSeenCount]      = useState(0)
-  const [formData,       setFormData]       = useState({ name: '', phone: '' })
+  const [activeId,  setActiveId]  = useState(defaultCategory)
+  const [lightbox,  setLightbox]  = useState<{ photos: typeof ALL_PHOTOS; idx: number } | null>(null)
+  const [formSent,  setFormSent]  = useState(false)
+  const [formData,  setFormData]  = useState({ name: '', phone: '' })
 
   // Close on Escape
   useEffect(() => {
@@ -151,17 +149,6 @@ export default function GalleryModal({ open, onClose, defaultCategory = 'all' }:
     else document.body.style.overflow = ''
     return () => { document.body.style.overflow = '' }
   }, [open])
-
-  // Track ảnh đã xem — hiện form khi đủ 43 ảnh
-  useEffect(() => {
-    if (!lightbox) return
-    setSeenCount(c => {
-      const next = c + 1
-      if (next >= TOTAL && !showContact) setTimeout(() => setShowContact(true), 600)
-      return next
-    })
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lightbox?.idx])
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -290,155 +277,143 @@ export default function GalleryModal({ open, onClose, defaultCategory = 'all' }:
       </div>
 
       {/* ── LIGHTBOX ── */}
-      {lightbox && (
-        <div
-          className="fixed inset-0 z-[300] bg-black/95 flex flex-col"
-          onClick={() => setLightbox(null)}
-        >
-          {/* Lightbox header */}
-          <div className="flex items-center justify-between px-6 py-4 flex-shrink-0" onClick={e => e.stopPropagation()}>
-            <div className="text-white/60 text-[13px] font-medium">
-              {lightbox.idx + 1} / {lightbox.photos.length}
-            </div>
-            <p className="text-white text-[13px] font-medium text-center flex-1 px-4">
-              {lightbox.photos[lightbox.idx].caption}
-            </p>
-            <button
-              onClick={() => setLightbox(null)}
-              className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
-                <path d="M18 6L6 18M6 6l12 12"/>
-              </svg>
-            </button>
-          </div>
+      {lightbox && (() => {
+        const isFormSlide = lightbox.idx >= lightbox.photos.length
+        const goNext = () => setLightbox(l => l ? { ...l, idx: Math.min(l.idx + 1, l.photos.length) } : null)
+        const goPrev = () => setLightbox(l => l ? { ...l, idx: Math.max(l.idx - 1, 0) } : null)
 
-          {/* Main image */}
-          <div className="flex-1 flex items-center justify-center px-16 min-h-0" onClick={e => e.stopPropagation()}>
-            <div className="relative w-full h-full max-w-5xl">
-              <Image
-                key={lightbox.photos[lightbox.idx].src}
-                src={lightbox.photos[lightbox.idx].src}
-                alt={lightbox.photos[lightbox.idx].caption}
-                fill
-                className="object-contain"
-                sizes="90vw"
-                priority
-              />
-            </div>
-          </div>
+        return (
+          <div className="fixed inset-0 z-[300] bg-black/95 flex flex-col">
 
-          {/* Prev / Next arrows */}
-          <button
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center transition-colors"
-            onClick={e => { e.stopPropagation(); setLightbox(l => l ? { ...l, idx: (l.idx - 1 + l.photos.length) % l.photos.length } : null) }}
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
-              <path d="M15 18l-6-6 6-6"/>
-            </svg>
-          </button>
-          <button
-            className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center transition-colors"
-            onClick={e => { e.stopPropagation(); setLightbox(l => l ? { ...l, idx: (l.idx + 1) % l.photos.length } : null) }}
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
-              <path d="M9 18l6-6-6-6"/>
-            </svg>
-          </button>
-
-          {/* Thumbnail filmstrip */}
-          <div className="flex-shrink-0 px-6 py-4 overflow-x-auto" onClick={e => e.stopPropagation()}>
-            <div className="flex gap-2 justify-center min-w-max mx-auto">
-              {lightbox.photos.map((p, i) => (
-                <div
-                  key={p.src}
-                  onClick={() => setLightbox(l => l ? { ...l, idx: i } : null)}
-                  className={`relative w-16 h-12 rounded overflow-hidden flex-shrink-0 cursor-pointer transition-all
-                    ${lightbox.idx === i ? 'ring-2 ring-white ring-offset-1 ring-offset-black' : 'opacity-50 hover:opacity-80'}`}
-                >
-                  <Image src={p.src} alt="" fill className="object-cover" sizes="64px" />
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ── Form popup sau khi xem hết ảnh ── */}
-      {showContact && !formSent && (
-        <div className="fixed inset-0 z-[400] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div
-            className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden"
-            onClick={e => e.stopPropagation()}
-          >
             {/* Header */}
-            <div className="relative bg-gradient-to-br from-[#e06f46] to-[#c45a33] px-6 pt-6 pb-8 text-white">
-              <button
-                onClick={() => setShowContact(false)}
-                className="absolute top-4 right-4 w-7 h-7 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors"
-              >
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
+            <div className="flex items-center justify-between px-6 py-4 flex-shrink-0">
+              <div className="text-white/60 text-[13px] font-medium">
+                {isFormSlide ? '✦ Liên hệ tư vấn' : `${lightbox.idx + 1} / ${lightbox.photos.length}`}
+              </div>
+              <p className="text-white text-[13px] font-medium text-center flex-1 px-4">
+                {isFormSlide ? 'Coastal Quảng Ngãi — Đăng ký nhận thông tin' : lightbox.photos[lightbox.idx]?.caption}
+              </p>
+              <button onClick={() => setLightbox(null)}
+                className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
                   <path d="M18 6L6 18M6 6l12 12"/>
                 </svg>
               </button>
-              <div className="text-2xl mb-2">🎉</div>
-              <h3 className="font-bold text-[17px] leading-snug">Bạn đã xem hết {TOTAL} ảnh!</h3>
-              <p className="text-white/80 text-[13px] mt-1.5 leading-relaxed">
-                Để lại thông tin để nhận tư vấn riêng và ưu đãi đặt chỗ sớm nhất.
-              </p>
             </div>
 
-            {/* Form */}
-            <form onSubmit={handleFormSubmit} className="px-6 py-5 space-y-3 -mt-4 relative">
-              <div className="bg-white rounded-xl shadow-[0_-4px_20px_rgba(0,0,0,0.06)] p-4 space-y-3">
-                <input
-                  required
-                  placeholder="Họ và tên *"
-                  value={formData.name}
-                  onChange={e => setFormData(d => ({ ...d, name: e.target.value }))}
-                  className="w-full border border-[#e5e5e5] rounded-lg px-4 py-2.5 text-[13px]
-                    focus:outline-none focus:border-[#e06f46] transition-colors"
-                />
-                <input
-                  required type="tel"
-                  placeholder="Số điện thoại *"
-                  value={formData.phone}
-                  onChange={e => setFormData(d => ({ ...d, phone: e.target.value }))}
-                  className="w-full border border-[#e5e5e5] rounded-lg px-4 py-2.5 text-[13px]
-                    focus:outline-none focus:border-[#e06f46] transition-colors"
-                />
-                <button type="submit"
-                  className="w-full bg-[#e06f46] hover:bg-[#c45a33] text-white py-3 rounded-lg
-                    text-[13px] font-bold tracking-wide transition-colors">
-                  Nhận Tư Vấn Ngay — Miễn Phí
-                </button>
-                <p className="text-center text-[11px] text-[#aaa]">🔒 Thông tin bảo mật tuyệt đối</p>
+            {/* Content — ảnh hoặc form */}
+            <div className="flex-1 flex items-center justify-center px-16 min-h-0" onClick={e => e.stopPropagation()}>
+              {isFormSlide ? (
+                /* ── Form slide ── */
+                <div className="w-full max-w-sm">
+                  {!formSent ? (
+                    <div className="bg-white rounded-2xl overflow-hidden shadow-2xl">
+                      {/* Header cam */}
+                      <div className="bg-gradient-to-br from-[#e06f46] to-[#c45a33] px-6 pt-6 pb-8 text-white">
+                        <div className="text-2xl mb-2">🎉</div>
+                        <h3 className="font-bold text-[17px]">Bạn đã xem hết {TOTAL} ảnh!</h3>
+                        <p className="text-white/80 text-[13px] mt-1.5 leading-relaxed">
+                          Để lại thông tin để nhận tư vấn và ưu đãi đặt chỗ sớm nhất.
+                        </p>
+                      </div>
+                      <form onSubmit={handleFormSubmit} className="px-6 py-5 -mt-4 relative space-y-3">
+                        <div className="bg-white rounded-xl shadow-[0_-4px_20px_rgba(0,0,0,0.06)] p-4 space-y-3">
+                          <input required placeholder="Họ và tên *"
+                            value={formData.name}
+                            onChange={e => setFormData(d => ({ ...d, name: e.target.value }))}
+                            className="w-full border border-[#e5e5e5] rounded-lg px-4 py-2.5 text-[13px] focus:outline-none focus:border-[#e06f46] transition-colors" />
+                          <input required type="tel" placeholder="Số điện thoại *"
+                            value={formData.phone}
+                            onChange={e => setFormData(d => ({ ...d, phone: e.target.value }))}
+                            className="w-full border border-[#e5e5e5] rounded-lg px-4 py-2.5 text-[13px] focus:outline-none focus:border-[#e06f46] transition-colors" />
+                          <button type="submit"
+                            className="w-full bg-[#e06f46] hover:bg-[#c45a33] text-white py-3 rounded-lg text-[13px] font-bold tracking-wide transition-colors">
+                            Nhận Tư Vấn Ngay — Miễn Phí
+                          </button>
+                          <p className="text-center text-[11px] text-[#aaa]">🔒 Thông tin bảo mật tuyệt đối</p>
+                        </div>
+                      </form>
+                    </div>
+                  ) : (
+                    <div className="bg-white rounded-2xl p-8 text-center shadow-2xl">
+                      <div className="w-14 h-14 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
+                        <svg className="w-7 h-7 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/>
+                        </svg>
+                      </div>
+                      <h3 className="font-bold text-[17px] text-[#1a1a1a] mb-2">Đăng ký thành công!</h3>
+                      <p className="text-[#888] text-[13px] mb-5 leading-relaxed">
+                        Tư vấn viên sẽ liên hệ trong <span className="text-[#e06f46] font-semibold">30 phút</span> làm việc.
+                      </p>
+                      <button onClick={() => setLightbox(null)}
+                        className="bg-[#e06f46] text-white px-8 py-2.5 rounded-lg text-[13px] font-bold hover:bg-[#c45a33] transition-colors">
+                        Đóng
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                /* ── Ảnh thường ── */
+                <div className="relative w-full h-full max-w-5xl">
+                  <Image
+                    key={lightbox.photos[lightbox.idx].src}
+                    src={lightbox.photos[lightbox.idx].src}
+                    alt={lightbox.photos[lightbox.idx].caption}
+                    fill className="object-contain" sizes="90vw" priority
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Prev arrow — ẩn ở ảnh đầu */}
+            {lightbox.idx > 0 && (
+              <button className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center transition-colors"
+                onClick={goPrev}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
+                  <path d="M15 18l-6-6 6-6"/>
+                </svg>
+              </button>
+            )}
+
+            {/* Next arrow — ảnh cuối → form, form → ẩn */}
+            {!isFormSlide && (
+              <button className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center transition-colors"
+                onClick={goNext}>
+                {lightbox.idx === lightbox.photos.length - 1 ? (
+                  /* Last photo: hint đến form */
+                  <div className="flex flex-col items-center gap-1">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
+                      <path d="M9 18l6-6-6-6"/>
+                    </svg>
+                    <span className="text-white/60 text-[8px] tracking-wide">Form</span>
+                  </div>
+                ) : (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
+                    <path d="M9 18l6-6-6-6"/>
+                  </svg>
+                )}
+              </button>
+            )}
+
+            {/* Thumbnail filmstrip — ẩn khi form slide */}
+            {!isFormSlide && (
+              <div className="flex-shrink-0 px-6 py-4 overflow-x-auto no-scrollbar">
+                <div className="flex gap-2 justify-center min-w-max mx-auto">
+                  {lightbox.photos.map((p, i) => (
+                    <div key={p.src}
+                      onClick={() => setLightbox(l => l ? { ...l, idx: i } : null)}
+                      className={`relative w-16 h-12 rounded overflow-hidden flex-shrink-0 cursor-pointer transition-all
+                        ${lightbox.idx === i ? 'ring-2 ring-white ring-offset-1 ring-offset-black' : 'opacity-50 hover:opacity-80'}`}>
+                      <Image src={p.src} alt="" fill className="object-cover" sizes="64px" />
+                    </div>
+                  ))}
+                </div>
               </div>
-            </form>
+            )}
           </div>
-        </div>
-      )}
+        )
+      })()}
 
-      {/* Success sau khi submit */}
-      {showContact && formSent && (
-        <div className="fixed inset-0 z-[400] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-xs p-8 text-center">
-            <div className="w-14 h-14 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
-              <svg className="w-7 h-7 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/>
-              </svg>
-            </div>
-            <h3 className="font-bold text-[17px] text-[#1a1a1a] mb-2">Đăng ký thành công!</h3>
-            <p className="text-[#888] text-[13px] mb-5 leading-relaxed">
-              Tư vấn viên sẽ liên hệ bạn trong <span className="text-[#e06f46] font-semibold">30 phút</span> làm việc.
-            </p>
-            <button onClick={() => { setShowContact(false); onClose() }}
-              className="bg-[#e06f46] text-white px-8 py-2.5 rounded-lg text-[13px] font-bold hover:bg-[#c45a33] transition-colors">
-              Đóng
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   )
 }
