@@ -3,37 +3,38 @@
 @tailwind utilities;
 
 :root {
-  --cream:      #faf8f5;
-  --cream-alt:  #f2ede4;
-  --sand:       #e8dfd0;
-  --gold:       #b8922a;
-  --gold-light: #d4a83a;
-  --text:       #1c1916;
-  --text-mid:   #6b6459;
-  --text-light: #9c9187;
-  --border:     rgba(168,140,100,0.22);
+  --orange:       #e06f46;
+  --orange-dark:  #c45a33;
+  --orange-light: #f08060;
+  --dark:         #1a1a1a;
+  --mid:          #555555;
+  --light:        #888888;
+  --border:       #e5e5e5;
+  --bg:           #ffffff;
+  --bg-soft:      #f7f7f7;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
-
 html { scroll-behavior: smooth; }
 
-body {
-  background-color: var(--cream);
-  color: var(--text);
-}
-
 ::selection {
-  background: rgba(184,146,42,0.2);
-  color: var(--text);
+  background: rgba(224, 111, 70, 0.18);
+  color: var(--dark);
 }
 
-.card-scroll-img {
-  object-fit: cover;
-  object-position: top;
-  transition: object-position 5s ease-in-out;
-}
+/* Vertical scrollbar only — trang chính */
+::-webkit-scrollbar { width: 5px; height: 0px; }
+::-webkit-scrollbar-track { background: #f1f1f1; }
+::-webkit-scrollbar-thumb { background: var(--orange); border-radius: 2px; }
 
-.group:hover .card-scroll-img {
-  object-position: bottom;
+/* Ẩn hoàn toàn scrollbar trong tab / overflow containers */
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* Partners marquee */
+.marquee-track { animation: marquee-scroll 30s linear infinite; }
+.marquee-track:hover { animation-play-state: paused; }
+@keyframes marquee-scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
