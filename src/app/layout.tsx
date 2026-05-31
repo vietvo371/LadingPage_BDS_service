@@ -158,7 +158,7 @@ const jsonLd = {
       logo:     `${BASE_URL}/icon-512.png`,
       contactPoint: {
         '@type':            'ContactPoint',
-        telephone:          '+84-905-000-000',
+        telephone:          '+84-365-285-863',
         contactType:        'sales',
         availableLanguage:  'Vietnamese',
       },

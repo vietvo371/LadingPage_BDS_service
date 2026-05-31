@@ -37,19 +37,19 @@ export default function Footer() {
             <h4 className="text-[11px] tracking-[2px] uppercase text-[#666] mb-4">Liên Hệ</h4>
             <ul className="space-y-2 text-[13px] text-[#888]">
               <li>
-                <a href="tel:1800xxxx" className="hover:text-[#e06f46] transition-colors">
-                  Hotline: 1800 xxxx
+                <a href="tel:0365285863" className="hover:text-[#e06f46] transition-colors">
+                  Hotline: 0365 285 863
                 </a>
               </li>
               <li>
-                <a href="mailto:info@coastal-qn.vn" className="hover:text-[#e06f46] transition-colors">
-                  Email hỗ trợ: info@coastal-qn.vn
+                <a href="mailto:trungnguyen.coastal@gmail.com" className="hover:text-[#e06f46] transition-colors">
+                  trungnguyen.coastal@gmail.com
                 </a>
               </li>
               <li>
-                <a href="https://zalo.me/0905000000" target="_blank" rel="noopener noreferrer"
+                <a href="https://zalo.me/0365285863" target="_blank" rel="noopener noreferrer"
                   className="hover:text-[#e06f46] transition-colors">
-                  Zalo: 0905 xxx xxx
+                  Zalo: 0365 285 863
                 </a>
               </li>
             </ul>
@@ -83,7 +83,7 @@ export default function Footer() {
               </svg>
             </a>
             {/* Zalo */}
-            <a href="https://zalo.me/0905000000" target="_blank" rel="noopener noreferrer" aria-label="Zalo"
+            <a href="https://zalo.me/0365285863" target="_blank" rel="noopener noreferrer" aria-label="Zalo"
               className="w-8 h-8 rounded-full border border-[#444] flex items-center justify-center text-[#666] hover:border-[#0068ff] hover:text-[#0068ff] transition-all">
               <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.987-1.32A9.953 9.953 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z"/>
