@@ -46,8 +46,8 @@ const TABS: { id: string; label: string; icon: string; places: Place[] }[] = [
 ]
 
 const MAPS_EMBED =
-  'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3879.4!2d108.8!3d15.1!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTXCsDA2JzAwLjAiTiAxMDjCsDQ4JzAwLjAiRQ!5e1!3m2!1svi!2svn!4v1'
-const MAPS_LINK = 'https://maps.app.goo.gl/fayQMvikCVXt9iYf6'
+  'https://maps.google.com/maps?q=Coastal+Qu%E1%BA%A3ng+Ng%C3%A3i+-+Khu+%C4%90%C3%B4+Th%E1%BB%8B+Ngh%E1%BB%89+D%C6%B0%E1%BB%A1ng,+Dung+Qu%E1%BA%A5t+-+Sa+Hu%E1%BB%B3nh,+Qu%E1%BA%A3ng+Ng%C3%A3i&output=embed&z=15&ie=UTF8'
+const MAPS_LINK  = 'https://www.google.com/maps?q=Coastal+Qu%E1%BA%A3ng+Ng%C3%A3i+-+Khu+%C4%90%C3%B4+Th%E1%BB%8B+Ngh%E1%BB%89+D%C6%B0%E1%BB%A1ng,+Dung+Qu%E1%BA%A5t+-+Sa+Hu%E1%BB%B3nh,+Qu%E1%BA%A3ng+Ng%C3%A3i,+570000&ftid=0x316853e07cfcdfe1:0xca1e016750eb30b9'
 
 export default function LocationMap() {
   const [activeTab, setActiveTab] = useState('school')
@@ -62,7 +62,7 @@ export default function LocationMap() {
         <svg className="w-3.5 h-3.5 text-[#e06f46] flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
           <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
         </svg>
-        Ven biển Nghĩa An, Xã Tư Nghĩa, Tỉnh Quảng Ngãi
+        Dung Quất – Sa Huỳnh, Tỉnh Quảng Ngãi, 570000
       </div>
 
       {/* Map iframe */}
