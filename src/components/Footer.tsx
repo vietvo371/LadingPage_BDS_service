@@ -58,10 +58,17 @@ export default function Footer() {
           {/* QR Zalo */}
           <div>
             <h4 className="text-[11px] tracking-[2px] uppercase text-[#666] mb-4">Quét Qua Zalo</h4>
-            <div className="w-20 h-20 bg-white rounded flex items-center justify-center">
-              <span className="text-[#333] text-[10px] text-center leading-tight px-1">QR Zalo<br/>sắp có</span>
-            </div>
-            <p className="text-[#666] text-[11px] mt-2">Quét mã QR Zalo</p>
+            <a href="https://zalo.me/0365285863" target="_blank" rel="noopener noreferrer"
+              className="block w-24 h-24 bg-white rounded-lg p-1.5 hover:scale-105 transition-transform">
+              <Image
+                src="/images/logo/qr-zalo.png"
+                alt="QR Code Zalo Nguyễn Quốc Trung"
+                width={90}
+                height={90}
+                className="w-full h-full object-contain"
+              />
+            </a>
+            <p className="text-[#666] text-[11px] mt-2">Quét để nhắn Zalo ngay</p>
           </div>
         </div>
 
