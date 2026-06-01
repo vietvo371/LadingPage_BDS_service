@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import Image from 'next/image'
 
 // ── Photo catalogue — dùng ảnh render đẹp (02+) ──
@@ -13,42 +13,49 @@ const CATEGORIES = [
     ],
   },
   {
-    id: 'dinh-thu',
-    label: 'Dinh Thự Trị Liệu',
-    count: 6,
+    id: 'nha-vuon',
+    label: 'Nhà Vườn',
+    count: 4,
     photos: [
-      { src: '/images/mau-nha/dinh-thu-tri-lieu/dinh-thu-tri-lieu-03.png', caption: 'Hồ bơi Dinh Thự — view sông' },
-      { src: '/images/mau-nha/dinh-thu-tri-lieu/dinh-thu-tri-lieu-02.png', caption: 'Dinh Thự Trị Liệu — ngoại thất' },
-      { src: '/images/mau-nha/dinh-thu-tri-lieu/dinh-thu-tri-lieu-04.png', caption: 'Dinh Thự — không gian sống' },
-      { src: '/images/mau-nha/dinh-thu-tri-lieu/dinh-thu-tri-lieu-05.png', caption: 'Dinh Thự — chi tiết kiến trúc' },
-      { src: '/images/mau-nha/dinh-thu-tri-lieu/dinh-thu-tri-lieu-06.png', caption: 'Dinh Thự — góc nhìn 2' },
-      { src: '/images/mau-nha/dinh-thu-tri-lieu/dinh-thu-tri-lieu-07.png', caption: 'Dinh Thự — cảnh quan' },
+      { src: '/images/mau-nha/nha-vuon/nha-vuon-04.png', caption: 'Nhà Vườn — kiến trúc đặc trưng' },
+      { src: '/images/mau-nha/nha-vuon/nha-vuon-05.png', caption: 'Nhà Vườn — không gian sống' },
+      { src: '/images/mau-nha/nha-vuon/nha-vuon-06.png', caption: 'Nhà Vườn — vườn cây' },
+      { src: '/images/mau-nha/nha-vuon/nha-vuon-07.png', caption: 'Nhà Vườn — góc nhìn tổng thể' },
     ],
   },
   {
-    id: 'biet-thu-don',
-    label: 'Biệt Thự Đơn Lập',
-    count: 6,
+    id: 'ven-song',
+    label: 'Nhà Ven Sông',
+    count: 5,
     photos: [
-      { src: '/images/mau-nha/biet-thu-bien-don-lap/biet-thu-bien-don-lap-02.png', caption: 'Biệt Thự Biển Đơn Lập — ngoại thất' },
-      { src: '/images/mau-nha/biet-thu-bien-don-lap/biet-thu-bien-don-lap-03.png', caption: 'Biệt Thự Đơn Lập — góc vườn' },
-      { src: '/images/mau-nha/biet-thu-bien-don-lap/biet-thu-bien-don-lap-04.png', caption: 'Biệt Thự Đơn Lập — không gian' },
-      { src: '/images/mau-nha/biet-thu-bien-don-lap/biet-thu-bien-don-lap-05.png', caption: 'Biệt Thự Đơn Lập — chi tiết' },
-      { src: '/images/mau-nha/biet-thu-bien-don-lap/biet-thu-bien-don-lap-06.png', caption: 'Biệt Thự Đơn Lập — nội thất' },
-      { src: '/images/mau-nha/biet-thu-bien-don-lap/biet-thu-bien-don-lap-07.png', caption: 'Biệt Thự Đơn Lập — toàn cảnh' },
+      { src: '/images/mau-nha/nha-ven-song/nha-ven-song-02.png', caption: 'Nhà Ven Sông — kiến trúc tạo trải nghiệm' },
+      { src: '/images/mau-nha/nha-ven-song/nha-ven-song-03.png', caption: 'Nhà Ven Sông — view sông' },
+      { src: '/images/mau-nha/nha-ven-song/nha-ven-song-04.png', caption: 'Nhà Ven Sông — không gian' },
+      { src: '/images/mau-nha/nha-ven-song/nha-ven-song-05.png', caption: 'Nhà Ven Sông — mặt tiền' },
+      { src: '/images/mau-nha/nha-ven-song/nha-ven-song-06.png', caption: 'Nhà Ven Sông — ban đêm' },
     ],
   },
   {
-    id: 'biet-thu-song',
-    label: 'Biệt Thự Song Lập',
-    count: 6,
+    id: 'dai-lo',
+    label: 'Nhà Đại Lộ',
+    count: 4,
     photos: [
-      { src: '/images/mau-nha/biet-thu-bien-song-lap/biet-thu-bien-song-lap-02.png', caption: 'Biệt Thự Song Lập — ngoại thất' },
-      { src: '/images/mau-nha/biet-thu-bien-song-lap/biet-thu-bien-song-lap-03.png', caption: 'Biệt Thự Song Lập — khu vườn' },
-      { src: '/images/mau-nha/biet-thu-bien-song-lap/biet-thu-bien-song-lap-04.png', caption: 'Biệt Thự Song Lập — không gian' },
-      { src: '/images/mau-nha/biet-thu-bien-song-lap/biet-thu-bien-song-lap-05.png', caption: 'Biệt Thự Song Lập — góc 2' },
-      { src: '/images/mau-nha/biet-thu-bien-song-lap/biet-thu-bien-song-lap-06.png', caption: 'Biệt Thự Song Lập — ban đêm' },
-      { src: '/images/mau-nha/biet-thu-bien-song-lap/biet-thu-bien-song-lap-07.png', caption: 'Biệt Thự Song Lập — toàn cảnh' },
+      { src: '/images/mau-nha/nha-dai-lo/nha-dai-lo-02.png', caption: 'Nhà Đại Lộ — phố thương mại sầm uất' },
+      { src: '/images/mau-nha/nha-dai-lo/nha-dai-lo-03.png', caption: 'Nhà Đại Lộ — mặt tiền' },
+      { src: '/images/mau-nha/nha-dai-lo/nha-dai-lo-04.png', caption: 'Nhà Đại Lộ — kiến trúc' },
+      { src: '/images/mau-nha/nha-dai-lo/nha-dai-lo-05.png', caption: 'Nhà Đại Lộ — góc phố' },
+    ],
+  },
+  {
+    id: 'quang-truong',
+    label: 'Nhà Quảng Trường',
+    count: 5,
+    photos: [
+      { src: '/images/mau-nha/nha-quang-truong/nha-quang-truong-02.png', caption: 'Nhà Quảng Trường — phố thương mại' },
+      { src: '/images/mau-nha/nha-quang-truong/nha-quang-truong-03.png', caption: 'Nhà Quảng Trường — góc phố' },
+      { src: '/images/mau-nha/nha-quang-truong/nha-quang-truong-04.png', caption: 'Nhà Quảng Trường — mặt tiền' },
+      { src: '/images/mau-nha/nha-quang-truong/nha-quang-truong-05.png', caption: 'Nhà Quảng Trường — kiến trúc' },
+      { src: '/images/mau-nha/nha-quang-truong/nha-quang-truong-06.png', caption: 'Nhà Quảng Trường — ban đêm' },
     ],
   },
   {
@@ -65,49 +72,42 @@ const CATEGORIES = [
     ],
   },
   {
-    id: 'quang-truong',
-    label: 'Nhà Quảng Trường',
-    count: 5,
+    id: 'biet-thu-song',
+    label: 'Biệt Thự Song Lập',
+    count: 6,
     photos: [
-      { src: '/images/mau-nha/nha-quang-truong/nha-quang-truong-02.png', caption: 'Nhà Quảng Trường — phố thương mại' },
-      { src: '/images/mau-nha/nha-quang-truong/nha-quang-truong-03.png', caption: 'Nhà Quảng Trường — góc phố' },
-      { src: '/images/mau-nha/nha-quang-truong/nha-quang-truong-04.png', caption: 'Nhà Quảng Trường — mặt tiền' },
-      { src: '/images/mau-nha/nha-quang-truong/nha-quang-truong-05.png', caption: 'Nhà Quảng Trường — kiến trúc' },
-      { src: '/images/mau-nha/nha-quang-truong/nha-quang-truong-06.png', caption: 'Nhà Quảng Trường — ban đêm' },
+      { src: '/images/mau-nha/biet-thu-bien-song-lap/biet-thu-bien-song-lap-02.png', caption: 'Biệt Thự Song Lập — ngoại thất' },
+      { src: '/images/mau-nha/biet-thu-bien-song-lap/biet-thu-bien-song-lap-03.png', caption: 'Biệt Thự Song Lập — khu vườn' },
+      { src: '/images/mau-nha/biet-thu-bien-song-lap/biet-thu-bien-song-lap-04.png', caption: 'Biệt Thự Song Lập — không gian' },
+      { src: '/images/mau-nha/biet-thu-bien-song-lap/biet-thu-bien-song-lap-05.png', caption: 'Biệt Thự Song Lập — góc 2' },
+      { src: '/images/mau-nha/biet-thu-bien-song-lap/biet-thu-bien-song-lap-06.png', caption: 'Biệt Thự Song Lập — ban đêm' },
+      { src: '/images/mau-nha/biet-thu-bien-song-lap/biet-thu-bien-song-lap-07.png', caption: 'Biệt Thự Song Lập — toàn cảnh' },
     ],
   },
   {
-    id: 'dai-lo',
-    label: 'Nhà Đại Lộ',
-    count: 4,
+    id: 'biet-thu-don',
+    label: 'Biệt Thự Đơn Lập',
+    count: 6,
     photos: [
-      { src: '/images/mau-nha/nha-dai-lo/nha-dai-lo-02.png', caption: 'Nhà Đại Lộ — phố thương mại sầm uất' },
-      { src: '/images/mau-nha/nha-dai-lo/nha-dai-lo-03.png', caption: 'Nhà Đại Lộ — mặt tiền' },
-      { src: '/images/mau-nha/nha-dai-lo/nha-dai-lo-04.png', caption: 'Nhà Đại Lộ — kiến trúc' },
-      { src: '/images/mau-nha/nha-dai-lo/nha-dai-lo-05.png', caption: 'Nhà Đại Lộ — góc phố' },
+      { src: '/images/mau-nha/biet-thu-bien-don-lap/biet-thu-bien-don-lap-02.png', caption: 'Biệt Thự Biển Đơn Lập — ngoại thất' },
+      { src: '/images/mau-nha/biet-thu-bien-don-lap/biet-thu-bien-don-lap-03.png', caption: 'Biệt Thự Đơn Lập — góc vườn' },
+      { src: '/images/mau-nha/biet-thu-bien-don-lap/biet-thu-bien-don-lap-04.png', caption: 'Biệt Thự Đơn Lập — không gian' },
+      { src: '/images/mau-nha/biet-thu-bien-don-lap/biet-thu-bien-don-lap-05.png', caption: 'Biệt Thự Đơn Lập — chi tiết' },
+      { src: '/images/mau-nha/biet-thu-bien-don-lap/biet-thu-bien-don-lap-06.png', caption: 'Biệt Thự Đơn Lập — nội thất' },
+      { src: '/images/mau-nha/biet-thu-bien-don-lap/biet-thu-bien-don-lap-07.png', caption: 'Biệt Thự Đơn Lập — toàn cảnh' },
     ],
   },
   {
-    id: 'ven-song',
-    label: 'Nhà Ven Sông',
-    count: 5,
+    id: 'dinh-thu',
+    label: 'Dinh Thự Trị Liệu',
+    count: 6,
     photos: [
-      { src: '/images/mau-nha/nha-ven-song/nha-ven-song-02.png', caption: 'Nhà Ven Sông — kiến trúc tạo trải nghiệm' },
-      { src: '/images/mau-nha/nha-ven-song/nha-ven-song-03.png', caption: 'Nhà Ven Sông — view sông' },
-      { src: '/images/mau-nha/nha-ven-song/nha-ven-song-04.png', caption: 'Nhà Ven Sông — không gian' },
-      { src: '/images/mau-nha/nha-ven-song/nha-ven-song-05.png', caption: 'Nhà Ven Sông — mặt tiền' },
-      { src: '/images/mau-nha/nha-ven-song/nha-ven-song-06.png', caption: 'Nhà Ven Sông — ban đêm' },
-    ],
-  },
-  {
-    id: 'nha-vuon',
-    label: 'Nhà Vườn',
-    count: 4,
-    photos: [
-      { src: '/images/mau-nha/nha-vuon/nha-vuon-04.png', caption: 'Nhà Vườn — kiến trúc đặc trưng' },
-      { src: '/images/mau-nha/nha-vuon/nha-vuon-05.png', caption: 'Nhà Vườn — không gian sống' },
-      { src: '/images/mau-nha/nha-vuon/nha-vuon-06.png', caption: 'Nhà Vườn — vườn cây' },
-      { src: '/images/mau-nha/nha-vuon/nha-vuon-07.png', caption: 'Nhà Vườn — góc nhìn tổng thể' },
+      { src: '/images/mau-nha/dinh-thu-tri-lieu/dinh-thu-tri-lieu-03.png', caption: 'Hồ bơi Dinh Thự — view sông' },
+      { src: '/images/mau-nha/dinh-thu-tri-lieu/dinh-thu-tri-lieu-02.png', caption: 'Dinh Thự Trị Liệu — ngoại thất' },
+      { src: '/images/mau-nha/dinh-thu-tri-lieu/dinh-thu-tri-lieu-04.png', caption: 'Dinh Thự — không gian sống' },
+      { src: '/images/mau-nha/dinh-thu-tri-lieu/dinh-thu-tri-lieu-05.png', caption: 'Dinh Thự — chi tiết kiến trúc' },
+      { src: '/images/mau-nha/dinh-thu-tri-lieu/dinh-thu-tri-lieu-06.png', caption: 'Dinh Thự — góc nhìn 2' },
+      { src: '/images/mau-nha/dinh-thu-tri-lieu/dinh-thu-tri-lieu-07.png', caption: 'Dinh Thự — cảnh quan' },
     ],
   },
 ]
@@ -127,6 +127,28 @@ export default function GalleryModal({ open, onClose, defaultCategory = 'all' }:
   const [formSent,      setFormSent]      = useState(false)
   const [formData,      setFormData]      = useState({ name: '', phone: '', email: '', message: '' })
   const [galleryTab,    setGalleryTab]    = useState<'message'|'booking'>('message')
+
+  // Drag scroll cho tab bar
+  const tabRef   = useRef<HTMLDivElement>(null)
+  const dragRef  = useRef({ isDragging: false, startX: 0, scrollLeft: 0 })
+
+  const onMouseDown = (e: React.MouseEvent) => {
+    const el = tabRef.current; if (!el) return
+    dragRef.current = { isDragging: true, startX: e.pageX - el.offsetLeft, scrollLeft: el.scrollLeft }
+    el.style.cursor = 'grabbing'
+  }
+  const onMouseMove = (e: React.MouseEvent) => {
+    if (!dragRef.current.isDragging) return
+    e.preventDefault()
+    const el = tabRef.current; if (!el) return
+    const x = e.pageX - el.offsetLeft
+    const walk = (x - dragRef.current.startX) * 1.5
+    el.scrollLeft = dragRef.current.scrollLeft - walk
+  }
+  const onMouseUp = () => {
+    dragRef.current.isDragging = false
+    if (tabRef.current) tabRef.current.style.cursor = 'grab'
+  }
 
   // Close on Escape
   useEffect(() => {
@@ -188,7 +210,14 @@ export default function GalleryModal({ open, onClose, defaultCategory = 'all' }:
           </div>
 
           {/* Category tabs — scrollable */}
-          <div className="hidden md:flex items-center gap-2 overflow-x-auto max-w-[60vw] no-scrollbar">
+          <div 
+            ref={tabRef}
+            onMouseDown={onMouseDown}
+            onMouseMove={onMouseMove}
+            onMouseUp={onMouseUp}
+            onMouseLeave={onMouseUp}
+            className="hidden md:flex items-center gap-2 overflow-x-auto flex-1 mx-8 pb-2 cursor-grab select-none [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-[#ccc]"
+          >
             <button
               onClick={() => setActiveId('all')}
               className={`px-3.5 py-1.5 rounded-full text-[12px] font-semibold whitespace-nowrap transition-all flex-shrink-0
@@ -217,7 +246,7 @@ export default function GalleryModal({ open, onClose, defaultCategory = 'all' }:
         </div>
 
         {/* Mobile category tabs */}
-        <div className="md:hidden overflow-x-auto no-scrollbar px-4 py-3 border-b border-[#e5e5e5] flex gap-2 flex-shrink-0">
+        <div className="md:hidden overflow-x-auto no-scrollbar px-4 py-3 border-b border-[#e5e5e5] flex gap-2 flex-shrink-0 w-full">
           <button onClick={() => setActiveId('all')}
             className={`px-3 py-1.5 rounded-full text-[11px] font-semibold whitespace-nowrap flex-shrink-0
               ${activeId === 'all' ? 'bg-[#1a1a1a] text-white' : 'bg-[#f5f5f5] text-[#555]'}`}>
