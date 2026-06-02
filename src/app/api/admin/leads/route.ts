@@ -21,3 +21,20 @@ export async function PATCH(request: Request) {
   })
   return NextResponse.json(lead)
 }
+
+export async function DELETE(request: Request) {
+  const session = await getSession()
+  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  try {
+    const { id } = await request.json()
+    await prisma.lead.delete({
+      where: { id: Number(id) },
+    })
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    console.error('Error in DELETE /api/admin/leads:', error)
+    return NextResponse.json({ error: 'Failed to delete lead' }, { status: 500 })
+  }
+}
+

@@ -431,6 +431,7 @@ export default function WordPressEditorPage() {
   const [activeSection, setActiveSection] = useState<string>('general')
   const [searchQuery, setSearchQuery] = useState<string>('')
   const [isDirty, setIsDirty] = useState(false)
+  const [resetDialogOpen, setResetDialogOpen] = useState(false)
 
   useEffect(() => {
     fetch('/api/admin/settings')
@@ -484,10 +485,14 @@ export default function WordPressEditorPage() {
   }
 
   const handleResetToDefaults = () => {
-    if (window.confirm("Bạn có chắc chắn muốn khôi phục toàn bộ nội dung về bản thiết kế gốc (Mockup)?")) {
-      setValues(MOCK_DEFAULTS)
-      setIsDirty(true)
-    }
+    setResetDialogOpen(true)
+  }
+
+  const confirmReset = () => {
+    setValues(MOCK_DEFAULTS)
+    setIsDirty(true)
+    setResetDialogOpen(false)
+    toast.success('Đã khôi phục toàn bộ nội dung về bản thiết kế gốc!')
   }
 
   const matchesSearch = (title: string, keywords: string[]) => {
@@ -1004,6 +1009,35 @@ export default function WordPressEditorPage() {
         </div>
 
       </div>
+
+      {/* Reset Confirmation Dialog */}
+      <Dialog open={resetDialogOpen} onOpenChange={setResetDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-amber-600">
+              <RotateCcw className="w-5 h-5 text-amber-500" />
+              Khôi phục thiết kế gốc?
+            </DialogTitle>
+            <DialogDescription className="text-slate-500 text-xs">
+              Hành động này sẽ thay thế toàn bộ nội dung hiện tại bằng bản thiết kế gốc (Mockup). Mọi thay đổi chưa xuất bản sẽ bị ghi đè. Bạn có chắc chắn muốn tiếp tục?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <button
+              onClick={() => setResetDialogOpen(false)}
+              className="px-4 py-2 rounded-lg border border-slate-200 text-slate-600 text-[13px] font-medium hover:bg-slate-50 transition-colors"
+            >
+              Hủy
+            </button>
+            <button
+              onClick={confirmReset}
+              className="px-4 py-2 rounded-lg bg-amber-500 hover:bg-[#c45a33] text-white text-[13px] font-semibold transition-colors"
+            >
+              Xác nhận khôi phục
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </AdminLayout>
   )
 }
