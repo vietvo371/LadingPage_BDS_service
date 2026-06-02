@@ -1,32 +1,31 @@
 import { NextResponse } from 'next/server'
+import { prisma } from '@/lib/prisma'
 
 export async function POST(request: Request) {
   try {
     const data = await request.json()
-    console.log('--- API /lead RECEIVED DATA ---:', data)
-    const sheetUrl = process.env.NEXT_PUBLIC_GOOGLE_SHEETS_URL
+    const { name, phone, email, message, source } = data
 
-    if (!sheetUrl) {
-      console.warn('Google Sheets Webhook URL is missing')
-      // Fallback response cho môi trường dev chưa setup
-      return NextResponse.json({ success: true, fake: true })
-    }
-
-    // Gửi dữ liệu tới Google Sheets
-    const response = await fetch(sheetUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
+    // Lưu vào DB
+    await prisma.lead.create({
+      data: {
+        name: name || 'Không rõ',
+        phone: phone || '',
+        email: email || null,
+        message: message || null,
+        source: source || 'unknown',
       },
-      body: JSON.stringify(data),
-      redirect: 'follow'
     })
 
-    if (!response.ok) {
-      const errorText = await response.text()
-      console.error('Google Sheets Error Response:', errorText)
-      throw new Error(`Failed to send data to Google Sheets. Status: ${response.status}`)
+    // Đồng thời gửi Google Sheets nếu có env
+    const sheetUrl = process.env.NEXT_PUBLIC_GOOGLE_SHEETS_URL
+    if (sheetUrl) {
+      fetch(sheetUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+        redirect: 'follow',
+      }).catch(err => console.error('Sheets error:', err))
     }
 
     return NextResponse.json({ success: true })

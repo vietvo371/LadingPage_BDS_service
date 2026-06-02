@@ -5,28 +5,40 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
-    "next": "14.2.3",
-    "react": "^18",
-    "react-dom": "^18",
-    "framer-motion": "^11",
+    "@libsql/client": "^0.17.3",
+    "@prisma/adapter-libsql": "^7.8.0",
+    "@prisma/client": "^7.8.0",
+    "@radix-ui/react-dialog": "^1.0.5",
+    "@radix-ui/react-label": "^2.0.2",
+    "@radix-ui/react-select": "^2.0.0",
+    "@upstash/redis": "^1.31.3",
+    "bcryptjs": "^3.0.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
-    "tailwind-merge": "^2.3.0",
-    "@radix-ui/react-dialog": "^1.0.5",
-    "@radix-ui/react-select": "^2.0.0",
-    "@radix-ui/react-label": "^2.0.2",
-    "@upstash/redis": "^1.31.3"
+    "framer-motion": "^11",
+    "jose": "^6.2.3",
+    "jsonwebtoken": "^9.0.3",
+    "next": "14.2.3",
+    "prisma": "^7.8.0",
+    "radix-ui": "^1.4.3",
+    "react": "^18",
+    "react-dom": "^18",
+    "tailwind-merge": "^2.3.0"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "tailwindcss": "^3.4.0",
     "autoprefixer": "^10.0.1",
-    "postcss": "^8"
+    "postcss": "^8",
+    "tailwindcss": "^3.4.0",
+    "tsx": "^4.22.4",
+    "typescript": "^5"
   }
 }

@@ -12,16 +12,29 @@ updated: 2026-06-02
 | Hệ thống | Status | Ghi chú |
 |----------|--------|---------|
 | Live URL | ✅ | coastal-quangngai.vercel.app |
-| Form → Google Sheets | ✅ | Data vào sheet thật, có timestamp |
-| Upstash Redis (views) | ✅ | 17+ lượt xem thật |
+| Form → Google Sheets | ✅ | Data vào sheet thật |
+| Form → SQLite DB | ✅ | Lưu đồng thời vào DB admin |
+| Upstash Redis (views) | ✅ | Đang đếm thật |
 | Upstash Redis (likes) | ✅ | Đang đếm thật |
+| Admin login | ✅ | /admin/login · jose JWT + httpOnly cookie |
+| Admin dashboard | ✅ | Thống kê leads, 3 trạng thái |
+| Admin leads | ✅ | Table, filter, đổi status, export CSV |
+| Admin settings | ✅ | Chỉnh giá/hotline/countdown không cần deploy |
 | Deploy auto Vercel | ✅ | Push main → auto deploy |
+
+## 🔐 Admin
+
+- URL: `/admin/login`
+- Email: `admin@coastal.vn`
+- Mật khẩu: `coastal2026` *(đổi sau khi deploy)*
 
 ## 📋 Todo còn lại
 
-- [ ] Đổi `BASE_URL` trong `layout.tsx` khi có domain thật (hiện: coastal-quangngai.vn)
+- [ ] Đổi `BASE_URL` trong `layout.tsx` khi có domain thật
 - [ ] Điền hotline thật vào ContactForm (hiện: `1800 xxxx`)
-- [ ] Test form submit từ website thật (không phải curl)
+- [ ] Đổi mật khẩu admin sau khi deploy lên Vercel
+- [ ] Thêm `JWT_SECRET` vào Vercel env vars
+- [ ] Deploy DB lên Vercel (SQLite → Turso hoặc PlanetScale)
 - [ ] (Optional) Vercel Analytics
 - [ ] (Optional) Video tour embed
 

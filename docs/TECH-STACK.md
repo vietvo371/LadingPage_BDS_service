@@ -9,9 +9,11 @@ updated: 2026-06-02
 
 | Layer | Tech |
 |-------|------|
-| Framework | Next.js 14.2.3 (App Router, Static) |
-| Styling | Tailwind CSS |
+| Framework | Next.js 14.2.3 (App Router) |
+| Styling | Tailwind CSS + shadcn/ui |
 | Animation | Framer Motion 11 |
+| DB | SQLite (Prisma 7 + libsql adapter) |
+| Auth | jose JWT + httpOnly cookie |
 | Deploy | Vercel (auto khi push main) |
 | Icons | Inline SVG |
 
@@ -57,10 +59,53 @@ UPSTASH_REDIS_REST_TOKEN="gQAAAAAAAaR2..."
 - JSON-LD: RealEstateListing + Organization + WebSite
 - OG Image: `/public/og-image.jpg` (1200×630)
 
+## Admin Routes
+
+```
+/admin/login      ← Login (jose JWT)
+/admin            ← Dashboard: stats leads
+/admin/leads      ← Bảng leads, filter, đổi status, export CSV
+/admin/settings   ← Sửa giá/hotline/countdown không cần deploy
+```
+
+```
+src/
+├── lib/
+│   ├── auth.ts       ← jose signToken/verifyToken/getSession
+│   ├── prisma.ts     ← Prisma singleton với libsql adapter
+│   └── utils.ts      ← cn() helper
+├── middleware.ts      ← Bảo vệ /admin/* bằng JWT Edge-compatible
+├── components/
+│   ├── ui/           ← shadcn: button, input, card, label
+│   └── admin/
+│       └── AdminSidebar.tsx
+└── app/
+    ├── admin/
+    │   ├── login/
+    │   ├── leads/
+    │   └── settings/
+    └── api/
+        ├── auth/login + logout
+        └── admin/leads + settings
+```
+
+## DB (Prisma 7 + SQLite)
+
+- File: `./dev.db` (project root)
+- Models: `User`, `Lead`, `Setting`
+- Seed: `npm run seed` → admin@coastal.vn / coastal2026
+- **Quan trọng:** Prisma 7 dùng `prisma-client` generator + `@prisma/adapter-libsql` (không dùng `prisma-client-js`)
+
+## shadcn/ui (manual install — không dùng CLI)
+
+Components trong `src/components/ui/`: button, input, card, label  
+CSS vars shadcn trong `globals.css`, Tailwind tokens trong `tailwind.config.ts`
+
 ## Lệnh thường dùng
 
 ```bash
 npm run dev          # dev local
+npm run seed         # tạo admin user + default settings
 npm run build        # build check
 git push origin main # deploy (auto Vercel)
 ```

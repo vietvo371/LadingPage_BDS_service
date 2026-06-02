@@ -34,6 +34,11 @@ yarn-error.log*
 # Vercel
 .vercel
 
+# Database files (không commit DB local)
+*.db
+*.db-shm
+*.db-wal
+
 # TypeScript
 *.tsbuildinfo
 next-env.d.ts
@@ -56,3 +61,5 @@ Thumbs.db
 .claude/
 .superpowers/
 .gemini/
+
+/src/generated/prisma
