@@ -31,9 +31,22 @@ import {
   LayoutTemplate,
   Search,
   RotateCcw,
-  X
+  X,
+  Image as ImageIcon,
+  Trash2,
+  FolderPlus,
+  Upload
 } from 'lucide-react'
 import { SettingsProvider, SettingsMap } from '@/components/SettingsProvider'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog'
+import { toast } from 'sonner'
 
 // Import components for live preview
 import Header from '@/components/Header'
@@ -194,6 +207,221 @@ function ImageUpload({ value, onChange, placeholder }: { value: string, onChange
   );
 }
 
+interface GalleryCategory {
+  id: string
+  label: string
+  photos: { src: string, caption: string }[]
+}
+
+function GalleryManager({ value, onChange }: { value: string, onChange: (val: string) => void }) {
+  const [categories, setCategories] = useState<GalleryCategory[]>([])
+  const [addDialogOpen, setAddDialogOpen] = useState(false)
+  const [newCatLabel, setNewCatLabel] = useState('')
+  const [deleteCatIdx, setDeleteCatIdx] = useState<number | null>(null)
+  const [uploadingIdx, setUploadingIdx] = useState<number | null>(null)
+
+  useEffect(() => {
+    try {
+      if (value) setCategories(JSON.parse(value))
+    } catch (e) {}
+  }, [value])
+
+  const notifyChange = (newCats: GalleryCategory[]) => {
+    setCategories(newCats)
+    onChange(JSON.stringify(newCats))
+  }
+
+  const handleAddCategory = () => {
+    const label = newCatLabel.trim()
+    if (!label) return
+    const id = label.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+    notifyChange([...categories, { id, label, photos: [] }])
+    setNewCatLabel('')
+    setAddDialogOpen(false)
+    toast.success(`Đã thêm danh mục “${label}”`)
+  }
+
+  const confirmDeleteCategory = () => {
+    if (deleteCatIdx === null) return
+    const label = categories[deleteCatIdx]?.label
+    const next = [...categories]
+    next.splice(deleteCatIdx, 1)
+    notifyChange(next)
+    setDeleteCatIdx(null)
+    toast.success(`Đã xoá danh mục “${label}”`)
+  }
+
+  const addPhoto = (catIdx: number, url: string) => {
+    const next = [...categories]
+    next[catIdx].photos.push({ src: url, caption: '' })
+    notifyChange(next)
+    toast.success('Tải ảnh thành công!')
+  }
+
+  const removePhoto = (catIdx: number, photoIdx: number) => {
+    const next = [...categories]
+    next[catIdx].photos.splice(photoIdx, 1)
+    notifyChange(next)
+    toast.success('Đã xoá ảnh')
+  }
+
+  const updateCaption = (catIdx: number, photoIdx: number, caption: string) => {
+    const next = [...categories]
+    next[catIdx].photos[photoIdx].caption = caption
+    notifyChange(next)
+  }
+
+  return (
+    <div className="space-y-5">
+      {categories.map((cat, cIdx) => (
+        <div key={cat.id} className="border border-slate-200 rounded-xl p-4 bg-white shadow-sm">
+          <div className="flex items-center justify-between mb-3 pb-3 border-b border-slate-100">
+            <div>
+              <h4 className="font-bold text-[13px] text-slate-800">{cat.label}</h4>
+              <p className="text-[10px] text-slate-400">{cat.photos.length} ảnh</p>
+            </div>
+            <div className="flex gap-2">
+              <label className={`cursor-pointer bg-[#e06f46]/10 hover:bg-[#e06f46]/20 text-[#e06f46] px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-colors flex items-center gap-1.5 ${uploadingIdx === cIdx ? 'opacity-60 pointer-events-none' : ''}`}>
+                <input type="file" className="hidden" accept="image/*" multiple onChange={async e => {
+                  const files = Array.from(e.target.files || [])
+                  if (!files.length) return
+                  setUploadingIdx(cIdx)
+                  const toastId = toast.loading(`Đang tải ${files.length} ảnh...`)
+                  try {
+                    for (const file of files) {
+                      const fd = new FormData(); fd.append('file', file)
+                      const res = await fetch('/api/admin/upload', { method: 'POST', body: fd })
+                      const data = await res.json()
+                      if (data.success) addPhoto(cIdx, data.url)
+                    }
+                    toast.success(`Tải lên ${files.length} ảnh thành công!`, { id: toastId })
+                  } catch {
+                    toast.error('Tải ảnh thất bại, vui lòng thử lại.', { id: toastId })
+                  } finally {
+                    setUploadingIdx(null)
+                    e.target.value = ''
+                  }
+                }} />
+                {uploadingIdx === cIdx ? <Loader2 className="w-3 h-3 animate-spin" /> : <Upload className="w-3 h-3" />}
+                Thêm ảnh
+              </label>
+              <button
+                onClick={() => setDeleteCatIdx(cIdx)}
+                className="text-red-400 hover:text-red-600 hover:bg-red-50 transition-colors px-2 py-1.5 rounded-lg"
+                title="Xoá danh mục"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            {cat.photos.map((photo, pIdx) => (
+              <div key={pIdx} className="relative group bg-slate-50 border border-slate-100 rounded-lg overflow-hidden flex flex-col shadow-sm">
+                <div className="relative aspect-[4/3] w-full bg-slate-200">
+                  <img src={photo.src} alt="" className="w-full h-full object-cover" />
+                  <button
+                    onClick={() => removePhoto(cIdx, pIdx)}
+                    className="absolute top-1.5 right-1.5 w-6 h-6 bg-white/90 hover:bg-red-500 hover:text-white text-red-500 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all shadow-sm"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+                <input
+                  value={photo.caption}
+                  onChange={e => updateCaption(cIdx, pIdx, e.target.value)}
+                  placeholder="Nhập chú thích..."
+                  className="w-full text-[11px] px-2.5 py-2 border-t border-slate-100 focus:outline-none focus:bg-[#fdf0eb] transition-colors text-slate-700 bg-white"
+                />
+              </div>
+            ))}
+            {cat.photos.length === 0 && (
+              <p className="text-[11px] text-slate-400 py-6 col-span-full text-center">Chưa có ảnh nào. Nhấn “Thêm ảnh” để bắt đầu!</p>
+            )}
+          </div>
+        </div>
+      ))}
+
+      {/* Add Category Button */}
+      <button
+        onClick={() => { setNewCatLabel(''); setAddDialogOpen(true) }}
+        className="w-full py-3 border-2 border-dashed border-slate-200 hover:border-[#e06f46] hover:bg-[#e06f46]/5 text-[#e06f46] rounded-xl text-[12px] font-semibold transition-all flex items-center justify-center gap-2"
+      >
+        <FolderPlus className="w-4 h-4" />
+        Thêm danh mục mới
+      </button>
+
+      {/* Add Category Dialog */}
+      <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <FolderPlus className="w-5 h-5 text-[#e06f46]" />
+              Thêm danh mục mới
+            </DialogTitle>
+            <DialogDescription>
+              Nhập tên cho danh mục ảnh mới. Ví dụ: “Tiến độ thực tế”, “Nội thất”...
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-2">
+            <Input
+              autoFocus
+              placeholder="Tên danh mục..."
+              value={newCatLabel}
+              onChange={e => setNewCatLabel(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && handleAddCategory()}
+              className="border-slate-200 focus:ring-1 focus:ring-[#e06f46]/50 focus:border-[#e06f46]"
+            />
+          </div>
+          <DialogFooter>
+            <button
+              onClick={() => setAddDialogOpen(false)}
+              className="px-4 py-2 rounded-lg border border-slate-200 text-slate-600 text-[13px] font-medium hover:bg-slate-50 transition-colors"
+            >
+              Hủy
+            </button>
+            <button
+              onClick={handleAddCategory}
+              disabled={!newCatLabel.trim()}
+              className="px-4 py-2 rounded-lg bg-[#e06f46] hover:bg-[#c45a33] disabled:opacity-50 disabled:cursor-not-allowed text-white text-[13px] font-semibold transition-colors"
+            >
+              Tạo danh mục
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirm Dialog */}
+      <Dialog open={deleteCatIdx !== null} onOpenChange={open => { if (!open) setDeleteCatIdx(null) }}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-red-600">
+              <Trash2 className="w-5 h-5" />
+              Xoá danh mục?
+            </DialogTitle>
+            <DialogDescription>
+              Danh mục <strong>{deleteCatIdx !== null ? categories[deleteCatIdx]?.label : ''}</strong> và toàn bộ ảnh bên trong sẽ bị xoá vĩnh viễn. Không thể hoàn tác!
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <button
+              onClick={() => setDeleteCatIdx(null)}
+              className="px-4 py-2 rounded-lg border border-slate-200 text-slate-600 text-[13px] font-medium hover:bg-slate-50 transition-colors"
+            >
+              Hủy
+            </button>
+            <button
+              onClick={confirmDeleteCategory}
+              className="px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white text-[13px] font-semibold transition-colors"
+            >
+              Xoá vĩnh viễn
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  )
+}
+
 export default function WordPressEditorPage() {
   const [values, setValues] = useState<SettingsMap>({})
   const [loading, setLoading] = useState(true)
@@ -227,15 +455,23 @@ export default function WordPressEditorPage() {
 
   async function handlePublish() {
     setSaving(true)
-    await fetch('/api/admin/settings', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(values),
-    })
-    setIsDirty(false)
-    setSaving(false)
-    setSaved(true)
-    setTimeout(() => setSaved(false), 3000)
+    const toastId = toast.loading('Đang xuất bản...')
+    try {
+      const res = await fetch('/api/admin/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(values),
+      })
+      if (!res.ok) throw new Error('Server error')
+      setIsDirty(false)
+      setSaved(true)
+      setTimeout(() => setSaved(false), 3000)
+      toast.success('Xuất bản thành công! Trang đã được cập nhật.', { id: toastId })
+    } catch {
+      toast.error('Xuất bản thất bại, vui lòng thử lại.', { id: toastId })
+    } finally {
+      setSaving(false)
+    }
   }
 
   const updateKey = (key: keyof SettingsMap, val: string) => {
@@ -575,6 +811,24 @@ export default function WordPressEditorPage() {
                           className="h-48 mb-12"
                         />
                       </div>
+                    </div>
+                  </EditorAccordion>
+                )}
+
+                {/* Section 8: Thư viện Hình ảnh */}
+                {matchesSearch("Thư viện Hình ảnh", ["ảnh", "hình ảnh", "thư viện", "gallery", "hình", "photo"]) && (
+                  <EditorAccordion
+                    title="Thư viện Hình ảnh"
+                    icon={ImageIcon}
+                    isOpen={activeSection === 'gallery' || searchQuery !== ''}
+                    onClick={() => toggleSection('gallery')}
+                  >
+                    <div className="space-y-1.5">
+                      <Label className="text-xs font-bold text-slate-700 mb-2 block">Quản lý danh mục & Hình ảnh</Label>
+                      <GalleryManager 
+                        value={values.gallery_data ?? ''} 
+                        onChange={(data) => updateKey('gallery_data', data)} 
+                      />
                     </div>
                   </EditorAccordion>
                 )}

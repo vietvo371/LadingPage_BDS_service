@@ -24,6 +24,7 @@ export interface SettingsMap {
   agent_address?: string
   property_info_html?: string
   amenities_html?: string
+  gallery_data?: string
 }
 
 const DEFAULTS: Required<SettingsMap> = {
@@ -87,6 +88,105 @@ const DEFAULTS: Required<SettingsMap> = {
     <li>Trường liên cấp quốc tế</li>
   </ul>
 </div>`,
+  gallery_data: JSON.stringify([
+    {
+      id: 'tong-the',
+      label: 'Phối Cảnh Tổng Thể',
+      photos: [
+        { src: '/images/ngoai-that/phoi-canh-tong-the.jpg', caption: 'Phối cảnh tổng thể Coastal Quảng Ngãi' },
+      ],
+    },
+    {
+      id: 'nha-vuon',
+      label: 'Nhà Vườn',
+      photos: [
+        { src: '/images/mau-nha/nha-vuon/nha-vuon-04.png', caption: 'Nhà Vườn — kiến trúc đặc trưng' },
+        { src: '/images/mau-nha/nha-vuon/nha-vuon-05.png', caption: 'Nhà Vườn — không gian sống' },
+        { src: '/images/mau-nha/nha-vuon/nha-vuon-06.png', caption: 'Nhà Vườn — vườn cây' },
+        { src: '/images/mau-nha/nha-vuon/nha-vuon-07.png', caption: 'Nhà Vườn — góc nhìn tổng thể' },
+      ],
+    },
+    {
+      id: 'ven-song',
+      label: 'Nhà Ven Sông',
+      photos: [
+        { src: '/images/mau-nha/nha-ven-song/nha-ven-song-02.png', caption: 'Nhà Ven Sông — kiến trúc tạo trải nghiệm' },
+        { src: '/images/mau-nha/nha-ven-song/nha-ven-song-03.png', caption: 'Nhà Ven Sông — view sông' },
+        { src: '/images/mau-nha/nha-ven-song/nha-ven-song-04.png', caption: 'Nhà Ven Sông — không gian' },
+        { src: '/images/mau-nha/nha-ven-song/nha-ven-song-05.png', caption: 'Nhà Ven Sông — mặt tiền' },
+        { src: '/images/mau-nha/nha-ven-song/nha-ven-song-06.png', caption: 'Nhà Ven Sông — ban đêm' },
+      ],
+    },
+    {
+      id: 'dai-lo',
+      label: 'Nhà Đại Lộ',
+      photos: [
+        { src: '/images/mau-nha/nha-dai-lo/nha-dai-lo-02.png', caption: 'Nhà Đại Lộ — phố thương mại sầm uất' },
+        { src: '/images/mau-nha/nha-dai-lo/nha-dai-lo-03.png', caption: 'Nhà Đại Lộ — mặt tiền' },
+        { src: '/images/mau-nha/nha-dai-lo/nha-dai-lo-04.png', caption: 'Nhà Đại Lộ — kiến trúc' },
+        { src: '/images/mau-nha/nha-dai-lo/nha-dai-lo-05.png', caption: 'Nhà Đại Lộ — góc phố' },
+      ],
+    },
+    {
+      id: 'quang-truong',
+      label: 'Nhà Quảng Trường',
+      photos: [
+        { src: '/images/mau-nha/nha-quang-truong/nha-quang-truong-02.png', caption: 'Nhà Quảng Trường — phố thương mại' },
+        { src: '/images/mau-nha/nha-quang-truong/nha-quang-truong-03.png', caption: 'Nhà Quảng Trường — góc phố' },
+        { src: '/images/mau-nha/nha-quang-truong/nha-quang-truong-04.png', caption: 'Nhà Quảng Trường — mặt tiền' },
+        { src: '/images/mau-nha/nha-quang-truong/nha-quang-truong-05.png', caption: 'Nhà Quảng Trường — kiến trúc' },
+        { src: '/images/mau-nha/nha-quang-truong/nha-quang-truong-06.png', caption: 'Nhà Quảng Trường — ban đêm' },
+      ],
+    },
+    {
+      id: 'cong-vien',
+      label: 'Nhà Công Viên',
+      photos: [
+        { src: '/images/mau-nha/nha-cong-vien/nha-cong-vien-03.png', caption: 'Nhà Công Viên — mặt tiền' },
+        { src: '/images/mau-nha/nha-cong-vien/nha-cong-vien-02.png', caption: 'Nhà Công Viên — ngoại thất' },
+        { src: '/images/mau-nha/nha-cong-vien/nha-cong-vien-04.png', caption: 'Nhà Công Viên — khu vườn' },
+        { src: '/images/mau-nha/nha-cong-vien/nha-cong-vien-05.png', caption: 'Nhà Công Viên — không gian' },
+        { src: '/images/mau-nha/nha-cong-vien/nha-cong-vien-06.png', caption: 'Nhà Công Viên — góc 2' },
+        { src: '/images/mau-nha/nha-cong-vien/nha-cong-vien-07.png', caption: 'Nhà Công Viên — chi tiết' },
+      ],
+    },
+    {
+      id: 'biet-thu-song',
+      label: 'Biệt Thự Song Lập',
+      photos: [
+        { src: '/images/mau-nha/biet-thu-bien-song-lap/biet-thu-bien-song-lap-02.png', caption: 'Biệt Thự Song Lập — ngoại thất' },
+        { src: '/images/mau-nha/biet-thu-bien-song-lap/biet-thu-bien-song-lap-03.png', caption: 'Biệt Thự Song Lập — khu vườn' },
+        { src: '/images/mau-nha/biet-thu-bien-song-lap/biet-thu-bien-song-lap-04.png', caption: 'Biệt Thự Song Lập — không gian' },
+        { src: '/images/mau-nha/biet-thu-bien-song-lap/biet-thu-bien-song-lap-05.png', caption: 'Biệt Thự Song Lập — góc 2' },
+        { src: '/images/mau-nha/biet-thu-bien-song-lap/biet-thu-bien-song-lap-06.png', caption: 'Biệt Thự Song Lập — ban đêm' },
+        { src: '/images/mau-nha/biet-thu-bien-song-lap/biet-thu-bien-song-lap-07.png', caption: 'Biệt Thự Song Lập — toàn cảnh' },
+      ],
+    },
+    {
+      id: 'biet-thu-don',
+      label: 'Biệt Thự Đơn Lập',
+      photos: [
+        { src: '/images/mau-nha/biet-thu-bien-don-lap/biet-thu-bien-don-lap-02.png', caption: 'Biệt Thự Biển Đơn Lập — ngoại thất' },
+        { src: '/images/mau-nha/biet-thu-bien-don-lap/biet-thu-bien-don-lap-03.png', caption: 'Biệt Thự Đơn Lập — góc vườn' },
+        { src: '/images/mau-nha/biet-thu-bien-don-lap/biet-thu-bien-don-lap-04.png', caption: 'Biệt Thự Đơn Lập — không gian' },
+        { src: '/images/mau-nha/biet-thu-bien-don-lap/biet-thu-bien-don-lap-05.png', caption: 'Biệt Thự Đơn Lập — chi tiết' },
+        { src: '/images/mau-nha/biet-thu-bien-don-lap/biet-thu-bien-don-lap-06.png', caption: 'Biệt Thự Đơn Lập — nội thất' },
+        { src: '/images/mau-nha/biet-thu-bien-don-lap/biet-thu-bien-don-lap-07.png', caption: 'Biệt Thự Đơn Lập — toàn cảnh' },
+      ],
+    },
+    {
+      id: 'dinh-thu',
+      label: 'Dinh Thự Trị Liệu',
+      photos: [
+        { src: '/images/mau-nha/dinh-thu-tri-lieu/dinh-thu-tri-lieu-03.png', caption: 'Hồ bơi Dinh Thự — view sông' },
+        { src: '/images/mau-nha/dinh-thu-tri-lieu/dinh-thu-tri-lieu-02.png', caption: 'Dinh Thự Trị Liệu — ngoại thất' },
+        { src: '/images/mau-nha/dinh-thu-tri-lieu/dinh-thu-tri-lieu-04.png', caption: 'Dinh Thự — không gian sống' },
+        { src: '/images/mau-nha/dinh-thu-tri-lieu/dinh-thu-tri-lieu-05.png', caption: 'Dinh Thự — chi tiết kiến trúc' },
+        { src: '/images/mau-nha/dinh-thu-tri-lieu/dinh-thu-tri-lieu-06.png', caption: 'Dinh Thự — góc nhìn 2' },
+        { src: '/images/mau-nha/dinh-thu-tri-lieu/dinh-thu-tri-lieu-07.png', caption: 'Dinh Thự — cảnh quan' },
+      ],
+    }
+  ])
 }
 
 const SettingsContext = createContext<SettingsMap>(DEFAULTS)

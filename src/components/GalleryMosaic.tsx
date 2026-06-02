@@ -2,16 +2,10 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import GalleryModal from './GalleryModal'
-
-// Dùng ảnh render đẹp (02, 03) thay spec sheet (01)
-const MOSAIC_GRID = [
-  { src: '/images/mau-nha/dinh-thu-tri-lieu/dinh-thu-tri-lieu-03.png', alt: 'Dinh Thự — hồ bơi view sông' },
-  { src: '/images/mau-nha/biet-thu-bien-song-lap/biet-thu-bien-song-lap-02.png', alt: 'Biệt Thự Song Lập' },
-  { src: '/images/mau-nha/nha-cong-vien/nha-cong-vien-03.png', alt: 'Nhà Công Viên' },
-  { src: '/images/mau-nha/nha-quang-truong/nha-quang-truong-02.png', alt: 'Nhà Quảng Trường' },
-]
+import { useSettings } from './SettingsProvider'
 
 export default function GalleryMosaic() {
+  const settings = useSettings()
   const [galleryOpen, setGalleryOpen] = useState(false)
   const [liked,   setLiked]   = useState(false)
   const [likes,   setLikes]   = useState(87)
@@ -45,6 +39,16 @@ export default function GalleryMosaic() {
     }
   }
 
+  let allPhotos: { src: string, caption: string }[] = []
+  try {
+    if (settings.gallery_data) {
+      allPhotos = JSON.parse(settings.gallery_data).flatMap((c: any) => c.photos)
+    }
+  } catch (e) {}
+
+  const heroPhoto = allPhotos[0] || { src: '/images/ngoai-that/phoi-canh-tong-the.jpg', caption: 'Coastal Quảng Ngãi — Phối cảnh tổng thể' }
+  const mosaicPhotos = allPhotos.slice(1, 5)
+
   return (
     <>
       {/* ── Mosaic Gallery — JamesEdition layout ── */}
@@ -61,8 +65,8 @@ export default function GalleryMosaic() {
             onClick={() => setGalleryOpen(true)}
           >
             <Image
-              src="/images/ngoai-that/phoi-canh-tong-the.jpg"
-              alt="Coastal Quảng Ngãi — Phối cảnh tổng thể"
+              src={heroPhoto.src}
+              alt={heroPhoto.caption}
               fill priority quality={92}
               className="object-cover group-hover:scale-[1.03] transition-transform duration-700"
               sizes="58vw"
@@ -78,15 +82,15 @@ export default function GalleryMosaic() {
 
           {/* 2 × 2 grid RIGHT ~42% */}
           <div className="grid grid-cols-2 gap-[3px]" style={{ flex: '42 0 0%' }}>
-            {MOSAIC_GRID.map((img, i) => (
+            {mosaicPhotos.map((img, i) => (
               <div
-                key={img.src}
+                key={img.src + i}
                 className="relative overflow-hidden cursor-pointer group bg-[#f0f0f0]"
                 onClick={() => setGalleryOpen(true)}
               >
                 <Image
                   src={img.src}
-                  alt={img.alt}
+                  alt={img.caption || `Ảnh ${i + 1}`}
                   fill
                   className="object-cover group-hover:scale-[1.06] transition-transform duration-500"
                   sizes="21vw"

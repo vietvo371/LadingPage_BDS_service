@@ -9,34 +9,6 @@ import LocationMap       from './LocationMap'
 import ViewLikeCounter  from './ViewLikeCounter'
 import { useSettings } from './SettingsProvider'
 
-// ── Dùng ảnh render đẹp — bắt đầu từ 02 (bỏ spec sheet 01) ──
-const PHOTO_TABS = [
-  { label: 'Tất Cả',           catId: 'all',           folder: null,                     start: 2, count: 0  },
-  { label: 'Nhà Vườn',        catId: 'nha-vuon',      folder: 'nha-vuon',               start: 4, count: 4  },
-  { label: 'Nhà Ven Sông',     catId: 'ven-song',      folder: 'nha-ven-song',           start: 2, count: 5  },
-  { label: 'Nhà Đại Lộ',      catId: 'dai-lo',        folder: 'nha-dai-lo',             start: 2, count: 4  },
-  { label: 'Nhà Quảng Trường', catId: 'quang-truong',  folder: 'nha-quang-truong',       start: 2, count: 5  },
-  { label: 'Nhà Công Viên',    catId: 'cong-vien',     folder: 'nha-cong-vien',          start: 2, count: 6  },
-  { label: 'Biệt Thự Song Lập',catId: 'biet-thu-song', folder: 'biet-thu-bien-song-lap', start: 2, count: 6  },
-  { label: 'Biệt Thự Đơn Lập', catId: 'biet-thu-don',  folder: 'biet-thu-bien-don-lap',  start: 2, count: 6  },
-  { label: 'Dinh Thự Trị Liệu',catId: 'dinh-thu',      folder: 'dinh-thu-tri-lieu',      start: 2, count: 6  },
-]
-
-// Preview grid — 9 ảnh đẹp nhất cho tab "Tất Cả"
-const PREVIEW_ALL = [
-  '/images/mau-nha/dinh-thu-tri-lieu/dinh-thu-tri-lieu-03.png',
-  '/images/mau-nha/biet-thu-bien-don-lap/biet-thu-bien-don-lap-02.png',
-  '/images/mau-nha/nha-cong-vien/nha-cong-vien-03.png',
-  '/images/mau-nha/biet-thu-bien-song-lap/biet-thu-bien-song-lap-02.png',
-  '/images/mau-nha/nha-quang-truong/nha-quang-truong-02.png',
-  '/images/mau-nha/nha-dai-lo/nha-dai-lo-02.png',
-  '/images/mau-nha/nha-ven-song/nha-ven-song-02.png',
-  '/images/mau-nha/nha-vuon/nha-vuon-04.png',
-  '/images/ngoai-that/phoi-canh-tong-the.jpg',
-]
-
-// Amenities logic moved to rich text editor
-
 export default function PropertyMain() {
   const settings = useSettings()
   const [activeTab, setActiveTab]     = useState(0)
@@ -71,13 +43,28 @@ export default function PropertyMain() {
     setGalleryOpen(true)
   }
 
+  let CATEGORIES: { id: string, label: string, count: number, photos: { src: string }[] }[] = []
+  try {
+    if (settings.gallery_data) {
+      CATEGORIES = JSON.parse(settings.gallery_data).map((c: any) => ({
+        ...c,
+        count: c.photos?.length || 0
+      }))
+    }
+  } catch (e) {}
+
+  const ALL_PHOTOS = CATEGORIES.flatMap(c => c.photos.map(p => p.src))
+  const TOTAL_PHOTOS = ALL_PHOTOS.length
+
+  const TABS = [
+    { label: 'Tất Cả', catId: 'all', count: 0, photos: ALL_PHOTOS },
+    ...CATEGORIES.map(c => ({ label: c.label, catId: c.id, count: c.count, photos: c.photos.map(p => p.src) }))
+  ]
+
   const getPhotos = () => {
-    const tab = PHOTO_TABS[activeTab]
-    if (!tab.folder) return PREVIEW_ALL
-    return Array.from({ length: tab.count }, (_, i) => {
-      const n = String(tab.start + i).padStart(2, '0')
-      return `/images/mau-nha/${tab.folder}/${tab.folder}-${n}.png`
-    })
+    const tab = TABS[activeTab]
+    if (!tab) return []
+    return tab.photos.slice(0, 9) // Giới hạn hiển thị 9 ảnh đầu ở dạng lưới thu gọn
   }
 
   return (
@@ -125,7 +112,7 @@ export default function PropertyMain() {
           onMouseLeave={onMouseUp}
         >
           <div className="flex gap-2 min-w-max px-1">
-            {PHOTO_TABS.map((tab, i) => (
+            {TABS.map((tab, i) => (
               <button
                 key={tab.label}
                 onClick={() => setActiveTab(i)}
@@ -152,7 +139,7 @@ export default function PropertyMain() {
             <div
               key={`${activeTab}-${i}`}
               className="relative aspect-[4/3] overflow-hidden bg-[#f0f0f0] rounded-lg group cursor-pointer"
-              onClick={() => openGallery(PHOTO_TABS[activeTab].catId)}
+              onClick={() => openGallery(TABS[activeTab].catId)}
             >
               <Image
                 src={src}
@@ -175,13 +162,13 @@ export default function PropertyMain() {
 
         {/* Xem tất cả link */}
         <button
-          onClick={() => openGallery(PHOTO_TABS[activeTab].catId)}
+          onClick={() => openGallery(TABS[activeTab].catId)}
           className="mt-4 flex items-center gap-1.5 text-[13px] text-[#e06f46] font-semibold hover:underline underline-offset-2"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
-          Xem tất cả hình ảnh ({activeTab === 0 ? 43 : PHOTO_TABS[activeTab].count} ảnh)
+          Xem tất cả hình ảnh ({activeTab === 0 ? TOTAL_PHOTOS : TABS[activeTab].count} ảnh)
         </button>
 
         {/* Gallery Modal */}

@@ -2,7 +2,8 @@ import type { Metadata, Viewport } from 'next'
 import { Be_Vietnam_Pro } from 'next/font/google'
 import Script from 'next/script'
 import './globals.css'
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils"
+import { Toaster } from "@/components/ui/sonner"
 
 const beVietnam = Be_Vietnam_Pro({
   subsets: ['vietnamese', 'latin'],
@@ -184,6 +185,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="bg-white text-[#1a1a1a] font-[family-name:var(--font-be)] overflow-x-hidden">
         {children}
+        <Toaster richColors position="top-right" />
 
         <Script
           id="json-ld-schema"
