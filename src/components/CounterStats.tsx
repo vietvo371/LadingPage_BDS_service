@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
 import { useInView } from 'framer-motion'
+import { useSettings } from '@/components/SettingsProvider'
 
 type Stat = {
   end: number
@@ -11,19 +12,13 @@ type Stat = {
   sub?: string
 }
 
-const STATS: Stat[] = [
-  { end: 93.9, decimals: 1, suffix: ' ha',    label: 'Tổng Diện Tích',    sub: 'Quy mô đại đô thị' },
-  { end: 7100, suffix: ' tỷ', prefix: '',     label: 'Tổng Vốn Đầu Tư',  sub: 'Đồng VN' },
-  { end: 14.4, decimals: 1, suffix: '%',      label: 'Mật Độ Xây Dựng',  sub: 'Cảnh quan chiếm 85.6%' },
-  { end: 1111, suffix: '+',                   label: 'Sản Phẩm',          sub: 'Đa dạng loại hình' },
-]
-
 function useCounter(end: number, decimals = 0, inView: boolean) {
   const [val, setVal] = useState(0)
   const started = useRef(false)
 
   useEffect(() => {
-    if (!inView || started.current) return
+    if (!inView) return
+    // Allow reset if end changes (useful for live visual editor preview typing!)
     started.current = true
 
     const duration = 1800
@@ -43,6 +38,13 @@ function useCounter(end: number, decimals = 0, inView: boolean) {
 
     return () => clearInterval(timer)
   }, [inView, end, decimals])
+
+  // If the inView element didn't trigger, or end changes in editor, keep sync
+  useEffect(() => {
+    if (started.current) {
+      setVal(end)
+    }
+  }, [end])
 
   return val
 }
@@ -68,6 +70,15 @@ function StatCard({ stat }: { stat: Stat }) {
 }
 
 export default function CounterStats() {
+  const settings = useSettings()
+
+  const STATS: Stat[] = [
+    { end: parseFloat(settings.area_ha) || 93.9, decimals: 1, suffix: ' ha',    label: 'Tổng Diện Tích',    sub: 'Quy mô đại đô thị' },
+    { end: parseFloat(settings.total_investment.replace(/\./g, '')) || 7100, suffix: ' tỷ', prefix: '',     label: 'Tổng Vốn Đầu Tư',  sub: 'Đồng VN' },
+    { end: parseFloat(settings.density) || 14.4, decimals: 1, suffix: '%',      label: 'Mật Độ Xây Dựng',  sub: `Cảnh quan chiếm ${(100 - (parseFloat(settings.density) || 14.4)).toFixed(1)}%` },
+    { end: parseInt(settings.total_units) || 1111, suffix: '+',                   label: 'Sản Phẩm',          sub: 'Đa dạng loại hình' },
+  ]
+
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-[#ebebeb] border border-[#ebebeb] rounded-xl overflow-hidden mb-8">
       {STATS.map(s => (

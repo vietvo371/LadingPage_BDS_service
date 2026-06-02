@@ -6,10 +6,15 @@ import PartnersStrip   from '@/components/PartnersStrip'
 import Footer          from '@/components/Footer'
 import FloatingActions from '@/components/FloatingActions'
 import ScrollReveal    from '@/components/ScrollReveal'
+import { prisma }      from '@/lib/prisma'
+import { SettingsProvider } from '@/components/SettingsProvider'
 
-export default function Home() {
+export default async function Home() {
+  const settingsList = await prisma.setting.findMany().catch(() => [])
+  const settings = settingsList.reduce((acc, s) => ({ ...acc, [s.key]: s.value }), {} as Record<string, string>)
+
   return (
-    <>
+    <SettingsProvider settings={settings}>
       <Header />
       <main className="pt-[60px]">
 
@@ -42,6 +47,6 @@ export default function Home() {
 
       {/* Floating CTA + Back to top */}
       <FloatingActions />
-    </>
+    </SettingsProvider>
   )
 }

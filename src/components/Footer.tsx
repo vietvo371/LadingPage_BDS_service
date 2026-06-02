@@ -1,6 +1,10 @@
+'use client'
 import Image from 'next/image'
+import { useSettings } from '@/components/SettingsProvider'
 
 export default function Footer() {
+  const settings = useSettings()
+
   return (
     <footer className="bg-[#1a1a1a] text-white">
       <div className="max-w-[1320px] mx-auto px-4 md:px-8 py-12">
@@ -15,10 +19,11 @@ export default function Footer() {
                 width={140}
                 height={44}
                 className="h-11 w-auto object-contain brightness-0 invert"
+                priority
               />
             </div>
             <p className="text-[#888] text-[13px] leading-relaxed">
-              Khu đô thị nghỉ dưỡng ven biển cao cấp tại Xã Tư Nghĩa, Tỉnh Quảng Ngãi.
+              Khu đô thị nghỉ dưỡng ven biển cao cấp tại {settings.location}.
             </p>
           </div>
 
@@ -27,7 +32,7 @@ export default function Footer() {
             <h4 className="text-[11px] tracking-[2px] uppercase text-[#666] mb-4">Địa Chỉ</h4>
             <ul className="space-y-2 text-[13px] text-[#888]">
               <li>Ven biển Nghĩa An</li>
-              <li>Xã Tư Nghĩa, Tỉnh Quảng Ngãi</li>
+              <li>{settings.location}</li>
               <li>Việt Nam</li>
             </ul>
           </div>
@@ -37,8 +42,8 @@ export default function Footer() {
             <h4 className="text-[11px] tracking-[2px] uppercase text-[#666] mb-4">Liên Hệ</h4>
             <ul className="space-y-2 text-[13px] text-[#888]">
               <li>
-                <a href="tel:0365285863" className="hover:text-[#e06f46] transition-colors">
-                  Hotline: 0365 285 863
+                <a href={`tel:${settings.hotline.replace(/\s+/g, '')}`} className="hover:text-[#e06f46] transition-colors">
+                  Hotline: {settings.hotline}
                 </a>
               </li>
               <li>
@@ -47,9 +52,9 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="https://zalo.me/0365285863" target="_blank" rel="noopener noreferrer"
+                <a href={settings.zalo_link} target="_blank" rel="noopener noreferrer"
                   className="hover:text-[#e06f46] transition-colors">
-                  Zalo: 0365 285 863
+                  Zalo: {settings.hotline}
                 </a>
               </li>
             </ul>
@@ -58,7 +63,7 @@ export default function Footer() {
           {/* QR Zalo */}
           <div>
             <h4 className="text-[11px] tracking-[2px] uppercase text-[#666] mb-4">Quét Qua Zalo</h4>
-            <a href="https://zalo.me/0365285863" target="_blank" rel="noopener noreferrer"
+            <a href={settings.zalo_link} target="_blank" rel="noopener noreferrer"
               className="block w-24 h-24 bg-white rounded-lg p-1.5 hover:scale-105 transition-transform">
               <Image
                 src="/images/logo/qr-zalo.png"
@@ -90,7 +95,7 @@ export default function Footer() {
               </svg>
             </a>
             {/* Zalo */}
-            <a href="https://zalo.me/0365285863" target="_blank" rel="noopener noreferrer" aria-label="Zalo"
+            <a href={settings.zalo_link} target="_blank" rel="noopener noreferrer" aria-label="Zalo"
               className="w-8 h-8 rounded-full border border-[#444] flex items-center justify-center text-[#666] hover:border-[#0068ff] hover:text-[#0068ff] transition-all">
               <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.987-1.32A9.953 9.953 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z"/>

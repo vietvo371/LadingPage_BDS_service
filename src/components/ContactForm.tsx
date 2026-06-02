@@ -69,8 +69,8 @@ export default function ContactForm() {
             {/* Hotline */}
             <div className="mt-14 pt-10 border-t border-white/[0.07]">
               <p className="text-white/25 text-[10px] tracking-[3px] uppercase font-sans mb-3">Liên Hệ Trực Tiếp</p>
-              <a href="tel:1800xxxx" className="font-serif text-3xl font-bold text-[#c9a870] hover:text-[#dfc090] transition-colors">
-                1800 xxxx
+              <a href="tel:0365285863" className="font-serif text-3xl font-bold text-[#c9a870] hover:text-[#dfc090] transition-colors">
+                0365 285 863
               </a>
               <p className="text-white/25 text-xs font-sans mt-1">Thứ 2 – Thứ 7 · 08:00 – 18:00</p>
             </div>

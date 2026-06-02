@@ -10,7 +10,11 @@ const NAV = [
   ['#lien-he',    'Liên Hệ Tư Vấn'],
 ]
 
-export default function Header() {
+interface HeaderProps {
+  isPreview?: boolean
+}
+
+export default function Header({ isPreview = false }: HeaderProps) {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
 
@@ -21,7 +25,7 @@ export default function Header() {
   }, [])
 
   return (
-    <header className={`fixed top-0 left-0 w-full z-50 h-[60px] transition-all duration-300
+    <header className={`${isPreview ? 'absolute' : 'fixed'} top-0 left-0 w-full z-50 h-[60px] transition-all duration-300
       bg-white border-b border-[#e5e5e5]
       ${scrolled ? 'shadow-[0_2px_20px_rgba(0,0,0,0.08)]' : 'shadow-none'}`}>
       <div className="max-w-[1320px] mx-auto px-4 md:px-8 h-full flex items-center justify-between">

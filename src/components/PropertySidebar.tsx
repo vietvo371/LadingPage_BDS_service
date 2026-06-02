@@ -1,11 +1,13 @@
 'use client'
 import { useState } from 'react'
 import Image from 'next/image'
+import { useSettings } from '@/components/SettingsProvider'
 
 export default function PropertySidebar() {
   const [sent, setSent] = useState(false)
   const [loading, setLoading] = useState(false)
   const [tab, setTab] = useState<'message'|'booking'>('message')
+  const settings = useSettings()
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -28,6 +30,8 @@ export default function PropertySidebar() {
     ;(e.target as HTMLFormElement).reset()
   }
 
+  const cleanPhone = settings.hotline.replace(/\s+/g, '')
+
   return (
     <div>
       {/* Agent card */}
@@ -37,18 +41,18 @@ export default function PropertySidebar() {
         <div className="bg-[#f9f9f9] border-b border-[#e5e5e5] px-4 py-4 flex items-center gap-2 flex-wrap">
           <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-[#e06f46]/30">
             <Image
-              src="/images/logo/avt_trung.jpg"
-              alt="Nguyễn Quốc Trung"
+              src={settings.agent_avatar}
+              alt={settings.agent_name}
               width={48}
               height={48}
               className="w-full h-full object-cover object-top"
             />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="font-semibold text-[#1a1a1a] text-[14px]">Nguyễn Quốc Trung</p>
-            <p className="text-[#888] text-[12px]">Đội ngũ sàn PQR</p>
+            <p className="font-semibold text-[#1a1a1a] text-[14px]">{settings.agent_name}</p>
+            <p className="text-[#888] text-[12px]">{settings.agent_team}</p>
           </div>
-          <a href="tel:0365285863"
+          <a href={`tel:${cleanPhone}`}
             className="bg-[#e06f46] hover:bg-[#c45a33] text-white text-[12px] font-semibold px-3 py-1.5 rounded transition-colors whitespace-nowrap">
             Tư vấn ngay
           </a>
@@ -57,11 +61,11 @@ export default function PropertySidebar() {
         {/* Stats row */}
         <div className="grid grid-cols-2 divide-x divide-[#e5e5e5] border-b border-[#e5e5e5]">
           <div className="px-3 py-3 text-center">
-            <p className="font-bold text-[#1a1a1a] text-lg">5</p>
+            <p className="font-bold text-[#1a1a1a] text-lg">{settings.agent_bookings}</p>
             <p className="text-[#888] text-[10px]">Booking</p>
           </div>
           <div className="px-3 py-3 text-center">
-            <p className="font-bold text-[#1a1a1a] text-lg">2026</p>
+            <p className="font-bold text-[#1a1a1a] text-lg">{settings.agent_join_year}</p>
             <p className="text-[#888] text-[10px]">Đã tham gia</p>
           </div>
         </div>
@@ -113,7 +117,7 @@ export default function PropertySidebar() {
           ) : (
             <form onSubmit={handleSubmit} className="space-y-3">
               <p className="text-[13px] text-[#555] mb-3">
-                Đặt lịch tham quan dự án với <strong>Trung Nguyen</strong> — Hãy chọn ngày và loại hình tham quan mà bạn muốn.
+                Đặt lịch tham quan dự án với <strong>{settings.agent_name}</strong> — Hãy chọn ngày và loại hình tham quan mà bạn muốn.
               </p>
               <input name="name" type="text" required placeholder="Họ và tên *"
                 className="w-full border border-[#ddd] rounded px-3 py-2.5 text-[13px] focus:outline-none focus:border-[#e06f46] transition-colors" />
@@ -137,14 +141,14 @@ export default function PropertySidebar() {
 
         {/* Quick contact row */}
         <div className="border-t border-[#e5e5e5] px-5 py-4 flex gap-3">
-          <a href="tel:0365285863"
+          <a href={`tel:${cleanPhone}`}
             className="flex-1 flex items-center justify-center gap-1.5 border border-[#e5e5e5] hover:border-[#e06f46] text-[#555] hover:text-[#e06f46] py-2.5 rounded text-[12px] font-medium transition-all">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
             </svg>
             Gọi điện
           </a>
-          <a href="https://zalo.me/0365285863" target="_blank" rel="noopener noreferrer"
+          <a href={settings.zalo_link} target="_blank" rel="noopener noreferrer"
             className="flex-1 flex items-center justify-center gap-1.5 border border-[#e5e5e5] hover:border-[#0068ff] text-[#555] hover:text-[#0068ff] py-2.5 rounded text-[12px] font-medium transition-all">
             <Image src="/images/logo/zalo.jpg" alt="Zalo" width={18} height={18} className="rounded-sm object-contain" />
             Zalo
@@ -154,7 +158,7 @@ export default function PropertySidebar() {
 
       {/* Agent address */}
       <div className="text-center text-[12px] text-[#888] mt-2">
-        308 Hai Bà Trưng · Quảng Ngãi
+        {settings.agent_address}
       </div>
     </div>
   )

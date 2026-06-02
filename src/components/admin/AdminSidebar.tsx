@@ -9,6 +9,7 @@ import {
   Home,
   LogOut,
   User,
+  Globe,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -21,6 +22,7 @@ interface SidebarItem {
 
 const sidebarItems: SidebarItem[] = [
   { name: 'Dashboard', href: '/admin', icon: LayoutDashboard, exact: true },
+  { name: 'WordPress Editor', href: '/admin/editor', icon: Globe },
   { name: 'Khách hàng', href: '/admin/leads', icon: Users },
   { name: 'Cài đặt nội dung', href: '/admin/settings', icon: Settings },
   { name: 'Hồ sơ cá nhân', href: '/admin/profile', icon: User },

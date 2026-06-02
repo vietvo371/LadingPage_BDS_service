@@ -7,6 +7,7 @@ import CounterStats    from './CounterStats'
 import ScrollReveal    from './ScrollReveal'
 import LocationMap       from './LocationMap'
 import ViewLikeCounter  from './ViewLikeCounter'
+import { useSettings } from './SettingsProvider'
 
 // ── Dùng ảnh render đẹp — bắt đầu từ 02 (bỏ spec sheet 01) ──
 const PHOTO_TABS = [
@@ -59,6 +60,7 @@ function AmenityGroup({ cat, items }: { cat: string; items: string[] }) {
 }
 
 export default function PropertyMain() {
+  const settings = useSettings()
   const [activeTab, setActiveTab]     = useState(0)
   const [galleryOpen, setGalleryOpen] = useState(false)
   const [galleryCat,  setGalleryCat]  = useState('all')
@@ -105,8 +107,8 @@ export default function PropertyMain() {
 
       {/* ── Price & meta ── */}
       <div className="border-b border-[#e5e5e5] pb-6 mb-6">
-        <h1 className="text-3xl font-bold text-[#1a1a1a] mb-1">4.8 Tỷ – 30 Tỷ</h1>
-        <p className="text-[#555] text-[15px] mb-4">Xã Tư Nghĩa – Quảng Ngãi</p>
+        <h1 className="text-3xl font-bold text-[#1a1a1a] mb-1">{settings.price_range}</h1>
+        <p className="text-[#555] text-[15px] mb-4">{settings.location}</p>
 
         <div className="flex flex-wrap gap-x-6 gap-y-2 text-[13px] text-[#555]">
           <span>
@@ -221,11 +223,11 @@ export default function PropertyMain() {
           {/* Quote highlight box */}
           <div className="border-l-4 border-[#e06f46] bg-[#fdf6f3] px-5 py-4 rounded-r-lg">
             <p className="text-[#c45a33] font-semibold italic text-[14px] leading-relaxed">
-              "Khởi nguồn từ khát vọng kiến tạo một biểu tượng sống mới, Coastal Quảng Ngãi mang đến đặc quyền sống tinh hoa – nơi thiên nhiên khoáng đạt giao hòa cùng nhịp giao thương sầm uất ngay trung tâm thành phố."
+              "{settings.about_quote}"
             </p>
           </div>
           <p>
-            Dưới bàn tay tâm huyết của Chủ đầu tư Haus Quảng Ngãi, dự án tự hào là khu đô thị sinh thái biển tiên phong sở hữu tọa độ vàng <strong>"Kề giang – Cận hải"</strong> vô cùng hiếm có. Tại đây, mỗi ngày trôi qua là một trải nghiệm sống chuẩn mực bên bờ sông Trà Khúc thơ mộng, quyện cùng hơi thở tươi mát của đại dương bao la.
+            {settings.about_desc}
           </p>
 
           <div>
@@ -233,10 +235,10 @@ export default function PropertyMain() {
             <p className="mb-3">Được quy hoạch bài bản để trở thành một quần thể đô thị đồng bộ và đẳng cấp, Coastal Quảng Ngãi (Haus Coastal Quảng Ngãi) gây ấn tượng mạnh mẽ bởi những con số biết nói:</p>
             <ul className="space-y-2 pl-4">
               {[
-                ['Tổng diện tích', 'Lên đến 93.9 ha'],
-                ['Tổng vốn đầu tư', 'Hơn 7.100 tỷ đồng – minh chứng rõ nét cho tầm vóc và tiềm lực vững chắc của dự án'],
-                ['Mật độ xây dựng', 'Chỉ khoảng 14,4%. Phần lớn quỹ đất dành cho cảnh quan xanh, mặt nước và tiện ích độc quyền'],
-                ['Bổ sưu tập sản phẩm', 'Cung cấp gần hơn khoảng 1.111 sản phẩm đa dạng — Shophouse thương mại, Biệt thự song trung, Liên kề và Căn hộ cao tầng'],
+                ['Tổng diện tích', `Lên đến ${settings.area_ha} ha`],
+                ['Tổng vốn đầu tư', `Hơn ${settings.total_investment} tỷ đồng – minh chứng rõ nét cho tầm vóc và tiềm lực vững chắc của dự án`],
+                ['Mật độ xây dựng', `Chỉ khoảng ${settings.density}%. Phần lớn quỹ đất dành cho cảnh quan xanh, mặt nước và tiện ích độc quyền`],
+                ['Bộ sưu tập sản phẩm', `Cung cấp gần hơn khoảng ${settings.total_units} sản phẩm đa dạng — Shophouse thương mại, Biệt thự song trung, Liên kề và Căn hộ cao tầng`],
               ].map(([k, v]) => (
                 <li key={k} className="flex gap-2">
                   <span className="text-[#e06f46] mt-1 flex-shrink-0">•</span>
