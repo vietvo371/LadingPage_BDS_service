@@ -12,7 +12,7 @@ updated: 2026-06-02
 | Framework | Next.js 14.2.3 (App Router) |
 | Styling | Tailwind CSS + shadcn/ui |
 | Animation | Framer Motion 11 |
-| DB | SQLite (Prisma 7 + libsql adapter) |
+| DB | MySQL local (Prisma 6 + prisma-client-js) |
 | Auth | jose JWT + httpOnly cookie |
 | Deploy | Vercel (auto khi push main) |
 | Icons | Inline SVG |
@@ -89,12 +89,12 @@ src/
         └── admin/leads + settings
 ```
 
-## DB (Prisma 7 + SQLite)
+## DB (Prisma 6 + MySQL)
 
-- File: `./dev.db` (project root)
+- Local: `mysql://root@localhost:3306/coastal_admin`
 - Models: `User`, `Lead`, `Setting`
 - Seed: `npm run seed` → admin@coastal.vn / coastal2026
-- **Quan trọng:** Prisma 7 dùng `prisma-client` generator + `@prisma/adapter-libsql` (không dùng `prisma-client-js`)
+- Dùng `prisma-client-js` — không cần adapter, giống chanan-clone
 
 ## shadcn/ui (manual install — không dùng CLI)
 

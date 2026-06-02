@@ -1,36 +1,36 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "mysql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
   id        Int      @id @default(autoincrement())
-  email     String   @unique
-  password  String
-  name      String   @default("Admin")
-  role      String   @default("ADMIN")
+  email     String   @unique @db.VarChar(255)
+  password  String   @db.VarChar(255)
+  name      String   @default("Admin") @db.VarChar(100)
+  role      String   @default("ADMIN") @db.VarChar(20)
   createdAt DateTime @default(now())
 }
 
 model Lead {
   id        Int      @id @default(autoincrement())
-  name      String
-  phone     String
-  email     String?
-  message   String?
-  source    String   @default("unknown")
-  status    String   @default("NEW")
-  note      String?
+  name      String   @db.VarChar(100)
+  phone     String   @db.VarChar(20)
+  email     String?  @db.VarChar(255)
+  message   String?  @db.Text
+  source    String   @default("unknown") @db.VarChar(50)
+  status    String   @default("NEW") @db.VarChar(20)
+  note      String?  @db.Text
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Setting {
-  key       String   @id
-  value     String
+  key       String   @id @db.VarChar(100)
+  value     String   @db.Text
   updatedAt DateTime @updatedAt
 }

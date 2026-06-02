@@ -1,11 +1,7 @@
-import { PrismaClient } from '../src/generated/prisma/client'
-import { PrismaLibSql } from '@prisma/adapter-libsql'
+import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
-import path from 'path'
 
-const dbPath = path.resolve(__dirname, '../dev.db')
-const adapter = new PrismaLibSql({ url: `file:${dbPath}` })
-const prisma = new PrismaClient({ adapter } as any)
+const prisma = new PrismaClient()
 
 async function main() {
   const hash = await bcrypt.hash('coastal2026', 10)
