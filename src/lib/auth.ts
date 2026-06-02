@@ -13,7 +13,7 @@ export interface JwtPayload {
 }
 
 export async function signToken(payload: JwtPayload): Promise<string> {
-  return new SignJWT(payload as Record<string, unknown>)
+  return new SignJWT(payload as unknown as Record<string, unknown>)
     .setProtectedHeader({ alg: 'HS256' })
     .setExpirationTime('7d')
     .sign(JWT_SECRET)

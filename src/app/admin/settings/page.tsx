@@ -1,15 +1,17 @@
 "use client"
 
 import { useEffect, useState } from 'react'
-import AdminSidebar from '@/components/admin/AdminSidebar'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import AdminLayout from '@/components/admin/AdminLayout'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Separator } from '@/components/ui/separator'
+import { CheckCircle2, Loader2 } from 'lucide-react'
 
 const FIELDS = [
   { key: 'price_range', label: 'Khoảng giá', placeholder: '4.8 Tỷ – 30 Tỷ' },
-  { key: 'open_date', label: 'Ngày mở bán (YYYY-MM-DD)', placeholder: '2026-06-27' },
+  { key: 'open_date', label: 'Ngày mở bán', placeholder: '2026-06-27', hint: 'Định dạng YYYY-MM-DD' },
   { key: 'hotline', label: 'Hotline', placeholder: '0365 285 863' },
   { key: 'total_units', label: 'Số căn', placeholder: '1111' },
   { key: 'area_ha', label: 'Diện tích (ha)', placeholder: '93.9' },
@@ -39,27 +41,33 @@ export default function SettingsPage() {
     })
     setSaving(false)
     setSaved(true)
-    setTimeout(() => setSaved(false), 2000)
+    setTimeout(() => setSaved(false), 2500)
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <AdminSidebar />
-      <main className="flex-1 p-8">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">Cài đặt nội dung</h1>
-          <p className="text-sm text-gray-500 mt-1">Thay đổi thông số hiển thị mà không cần deploy lại</p>
+    <AdminLayout>
+      <header className="flex h-14 items-center border-b px-6">
+        <div>
+          <h1 className="text-base font-semibold">Cài đặt nội dung</h1>
+          <p className="text-xs text-muted-foreground">Thay đổi thông số không cần deploy lại</p>
         </div>
+      </header>
 
-        <Card className="max-w-xl">
+      <div className="p-6">
+        <Card className="max-w-lg">
           <CardHeader>
-            <CardTitle className="text-base">Thông số dự án</CardTitle>
+            <CardTitle className="text-sm font-medium">Thông số dự án</CardTitle>
+            <CardDescription>Chỉnh sửa thông tin hiển thị trên trang chủ</CardDescription>
           </CardHeader>
-          <CardContent>
+          <Separator />
+          <CardContent className="pt-6">
             {loading ? (
-              <p className="text-sm text-gray-400 py-4">Đang tải…</p>
+              <div className="flex items-center gap-2 py-4 text-sm text-muted-foreground">
+                <Loader2 className="size-4 animate-spin" />
+                Đang tải...
+              </div>
             ) : (
-              <form onSubmit={handleSave} className="flex flex-col gap-4">
+              <form onSubmit={handleSave} className="flex flex-col gap-5">
                 {FIELDS.map(f => (
                   <div key={f.key} className="flex flex-col gap-1.5">
                     <Label htmlFor={f.key}>{f.label}</Label>
@@ -69,17 +77,26 @@ export default function SettingsPage() {
                       onChange={e => setValues(prev => ({ ...prev, [f.key]: e.target.value }))}
                       placeholder={f.placeholder}
                     />
+                    {f.hint && <p className="text-xs text-muted-foreground">{f.hint}</p>}
                   </div>
                 ))}
-
-                <Button type="submit" disabled={saving} className="mt-2">
-                  {saved ? '✓ Đã lưu' : saving ? 'Đang lưu…' : 'Lưu thay đổi'}
-                </Button>
+                <div className="flex items-center gap-3 pt-2">
+                  <Button type="submit" disabled={saving}>
+                    {saving && <Loader2 className="size-4 animate-spin" />}
+                    {saving ? 'Đang lưu...' : 'Lưu thay đổi'}
+                  </Button>
+                  {saved && (
+                    <span className="flex items-center gap-1.5 text-sm text-emerald-600">
+                      <CheckCircle2 className="size-4" />
+                      Đã lưu
+                    </span>
+                  )}
+                </div>
               </form>
             )}
           </CardContent>
         </Card>
-      </main>
-    </div>
+      </div>
+    </AdminLayout>
   )
 }

@@ -1,9 +1,12 @@
 "use client"
 
 import { useEffect, useState } from 'react'
-import AdminSidebar from '@/components/admin/AdminSidebar'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import AdminLayout from '@/components/admin/AdminLayout'
+import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Download } from 'lucide-react'
 
 type Lead = {
   id: number
@@ -17,12 +20,10 @@ type Lead = {
   createdAt: string
 }
 
-const STATUS_OPTS = ['NEW', 'CALLED', 'CLOSED']
+const STATUS_OPTS = ['NEW', 'CALLED', 'CLOSED'] as const
 const STATUS_LABEL: Record<string, string> = { NEW: 'Mới', CALLED: 'Đã gọi', CLOSED: 'Đã chốt' }
-const STATUS_COLOR: Record<string, string> = {
-  NEW: 'bg-blue-100 text-blue-700',
-  CALLED: 'bg-orange-100 text-orange-700',
-  CLOSED: 'bg-green-100 text-green-700',
+const STATUS_VARIANT: Record<string, 'default' | 'secondary' | 'outline'> = {
+  NEW: 'default', CALLED: 'secondary', CLOSED: 'outline',
 }
 
 export default function LeadsPage() {
@@ -47,8 +48,8 @@ export default function LeadsPage() {
 
   function exportCSV() {
     const rows = [
-      ['ID', 'Tên', 'SĐT', 'Email', 'Nguồn', 'Trạng thái', 'Ghi chú', 'Thời gian'],
-      ...leads.map(l => [l.id, l.name, l.phone, l.email ?? '', l.source, STATUS_LABEL[l.status] ?? l.status, l.note ?? '', new Date(l.createdAt).toLocaleString('vi-VN')]),
+      ['ID', 'Tên', 'SĐT', 'Email', 'Nguồn', 'Trạng thái', 'Thời gian'],
+      ...leads.map(l => [l.id, l.name, l.phone, l.email ?? '', l.source, STATUS_LABEL[l.status] ?? l.status, new Date(l.createdAt).toLocaleString('vi-VN')]),
     ]
     const csv = rows.map(r => r.map(v => `"${v}"`).join(',')).join('\n')
     const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' })
@@ -61,77 +62,82 @@ export default function LeadsPage() {
   const filtered = filter === 'ALL' ? leads : leads.filter(l => l.status === filter)
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <AdminSidebar />
-      <main className="flex-1 p-8">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Khách hàng</h1>
-            <p className="text-sm text-gray-500 mt-1">{leads.length} leads tổng cộng</p>
-          </div>
-          <Button onClick={exportCSV} variant="outline" size="sm">
-            ⬇ Xuất CSV
-          </Button>
+    <AdminLayout>
+      <header className="flex h-14 items-center justify-between border-b px-6">
+        <div>
+          <h1 className="text-base font-semibold">Khách hàng</h1>
+          <p className="text-xs text-muted-foreground">{leads.length} leads tổng cộng</p>
         </div>
+        <Button onClick={exportCSV} variant="outline" size="sm">
+          <Download className="size-4" />
+          Xuất CSV
+        </Button>
+      </header>
 
-        <div className="flex gap-2 mb-6">
-          {['ALL', ...STATUS_OPTS].map(s => (
-            <button
-              key={s}
-              onClick={() => setFilter(s)}
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                filter === s ? 'bg-[#e06f46] text-white' : 'bg-white border text-gray-600 hover:bg-gray-50'
-              }`}
-            >
+      <div className="p-6 space-y-4">
+        <div className="flex gap-2">
+          {(['ALL', ...STATUS_OPTS] as string[]).map(s => (
+            <Button key={s} onClick={() => setFilter(s)} variant={filter === s ? 'default' : 'outline'} size="sm">
               {s === 'ALL' ? 'Tất cả' : STATUS_LABEL[s]}
-              <span className="ml-1.5 text-xs opacity-70">
+              <Badge variant="secondary" className="ml-1.5 text-xs">
                 {s === 'ALL' ? leads.length : leads.filter(l => l.status === s).length}
-              </span>
-            </button>
+              </Badge>
+            </Button>
           ))}
         </div>
 
         <Card>
           <CardContent className="p-0">
             {loading ? (
-              <p className="text-center py-12 text-gray-400">Đang tải…</p>
+              <p className="text-center py-12 text-muted-foreground text-sm">Đang tải...</p>
             ) : filtered.length === 0 ? (
-              <p className="text-center py-12 text-gray-400">Không có lead nào</p>
+              <p className="text-center py-12 text-muted-foreground text-sm">Không có lead nào</p>
             ) : (
-              <div className="divide-y">
-                {filtered.map(lead => (
-                  <div key={lead.id} className="flex items-start gap-4 px-6 py-4">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-0.5">
-                        <span className="font-semibold text-sm text-gray-900">{lead.name}</span>
-                        <span className={`text-xs px-1.5 py-0.5 rounded-full ${STATUS_COLOR[lead.status] ?? 'bg-gray-100 text-gray-600'}`}>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Họ tên</TableHead>
+                    <TableHead>Số điện thoại</TableHead>
+                    <TableHead>Nguồn</TableHead>
+                    <TableHead>Thời gian</TableHead>
+                    <TableHead>Trạng thái</TableHead>
+                    <TableHead className="text-right">Hành động</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filtered.map(lead => (
+                    <TableRow key={lead.id}>
+                      <TableCell>
+                        <div className="font-medium">{lead.name}</div>
+                        {lead.message && <div className="text-xs text-muted-foreground truncate max-w-48">{lead.message}</div>}
+                      </TableCell>
+                      <TableCell className="text-sm">{lead.phone}</TableCell>
+                      <TableCell><span className="text-xs text-muted-foreground">{lead.source}</span></TableCell>
+                      <TableCell className="text-xs text-muted-foreground whitespace-nowrap">
+                        {new Date(lead.createdAt).toLocaleString('vi-VN')}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={STATUS_VARIANT[lead.status] ?? 'outline'}>
                           {STATUS_LABEL[lead.status] ?? lead.status}
-                        </span>
-                      </div>
-                      <div className="text-sm text-gray-600">📞 {lead.phone}</div>
-                      {lead.message && <div className="text-xs text-gray-400 mt-1 truncate">{lead.message}</div>}
-                      <div className="text-xs text-gray-400 mt-1">
-                        {lead.source} · {new Date(lead.createdAt).toLocaleString('vi-VN')}
-                      </div>
-                    </div>
-                    <div className="flex gap-1 shrink-0">
-                      {STATUS_OPTS.filter(s => s !== lead.status).map(s => (
-                        <button
-                          key={s}
-                          onClick={() => updateStatus(lead.id, s)}
-                          className="text-xs px-2 py-1 rounded border text-gray-500 hover:bg-gray-50 transition-colors"
-                        >
-                          → {STATUS_LABEL[s]}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex gap-1 justify-end">
+                          {STATUS_OPTS.filter(s => s !== lead.status).map(s => (
+                            <Button key={s} variant="ghost" size="sm" onClick={() => updateStatus(lead.id, s)} className="text-xs h-7">
+                              {STATUS_LABEL[s]}
+                            </Button>
+                          ))}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             )}
           </CardContent>
         </Card>
-      </main>
-    </div>
+      </div>
+    </AdminLayout>
   )
 }

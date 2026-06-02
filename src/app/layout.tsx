@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import { Be_Vietnam_Pro } from 'next/font/google'
 import Script from 'next/script'
 import './globals.css'
+import { cn } from "@/lib/utils";
 
 const beVietnam = Be_Vietnam_Pro({
   subsets: ['vietnamese', 'latin'],
@@ -176,7 +177,7 @@ const jsonLd = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="vi" className={beVietnam.variable}>
+    <html lang="vi" className={cn("font-sans", beVietnam.variable)}>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="dns-prefetch" href="https://maps.google.com" />
