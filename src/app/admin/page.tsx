@@ -2,7 +2,6 @@ import { getSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { redirect } from 'next/navigation'
 import AdminLayout from '@/components/admin/AdminLayout'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { Users, PhoneCall, CheckCircle2, TrendingUp } from 'lucide-react'
@@ -14,14 +13,11 @@ async function getStats() {
     prisma.lead.count({ where: { status: 'CALLED' } }),
     prisma.lead.count({ where: { status: 'CLOSED' } }),
   ])
-  const recent = await prisma.lead.findMany({
-    orderBy: { createdAt: 'desc' },
-    take: 6,
-  })
+  const recent = await prisma.lead.findMany({ orderBy: { createdAt: 'desc' }, take: 6 })
   return { total, newLeads, called, closed, recent }
 }
 
-const STATUS_MAP: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
+const STATUS_MAP: Record<string, { label: string; variant: 'default' | 'secondary' | 'outline' }> = {
   NEW: { label: 'Mới', variant: 'default' },
   CALLED: { label: 'Đã gọi', variant: 'secondary' },
   CLOSED: { label: 'Đã chốt', variant: 'outline' },
@@ -30,19 +26,18 @@ const STATUS_MAP: Record<string, { label: string; variant: 'default' | 'secondar
 export default async function AdminDashboard() {
   const session = await getSession()
   if (!session) redirect('/admin/login')
-
   const stats = await getStats()
 
   const cards = [
-    { label: 'Tổng leads', value: stats.total, icon: TrendingUp, color: 'text-foreground' },
-    { label: 'Mới', value: stats.newLeads, icon: Users, color: 'text-blue-600' },
-    { label: 'Đã gọi', value: stats.called, icon: PhoneCall, color: 'text-orange-500' },
-    { label: 'Đã chốt', value: stats.closed, icon: CheckCircle2, color: 'text-emerald-600' },
+    { label: 'Tổng leads', value: stats.total, icon: TrendingUp, bg: 'bg-slate-50', iconColor: 'text-slate-500' },
+    { label: 'Mới', value: stats.newLeads, icon: Users, bg: 'bg-blue-50', iconColor: 'text-blue-500' },
+    { label: 'Đã gọi', value: stats.called, icon: PhoneCall, bg: 'bg-orange-50', iconColor: 'text-orange-500' },
+    { label: 'Đã chốt', value: stats.closed, icon: CheckCircle2, bg: 'bg-emerald-50', iconColor: 'text-emerald-500' },
   ]
 
   return (
     <AdminLayout>
-      <header className="flex h-14 items-center gap-4 border-b px-6">
+      <header className="flex h-14 items-center gap-4 border-b px-6 bg-white">
         <div>
           <h1 className="text-base font-semibold">Dashboard</h1>
           <p className="text-xs text-muted-foreground">{session.email}</p>
@@ -50,48 +45,46 @@ export default async function AdminDashboard() {
       </header>
 
       <div className="p-6 space-y-6">
+        {/* Stat cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {cards.map(card => (
-            <Card key={card.label}>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground flex items-center justify-between">
-                  {card.label}
-                  <card.icon className={`size-4 ${card.color}`} />
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className={`text-2xl font-bold ${card.color}`}>{card.value}</div>
-              </CardContent>
-            </Card>
+            <div key={card.label} className="rounded-xl border bg-white p-5 shadow-sm">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-sm text-muted-foreground font-medium">{card.label}</span>
+                <div className={`size-8 rounded-lg ${card.bg} flex items-center justify-center`}>
+                  <card.icon className={`size-4 ${card.iconColor}`} />
+                </div>
+              </div>
+              <div className="text-3xl font-bold text-foreground">{card.value}</div>
+            </div>
           ))}
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm font-medium">Leads gần đây</CardTitle>
-          </CardHeader>
+        {/* Recent leads */}
+        <div className="rounded-xl border bg-white shadow-sm">
+          <div className="px-5 py-4">
+            <h2 className="text-sm font-semibold">Leads gần đây</h2>
+          </div>
           <Separator />
-          <CardContent className="p-0">
-            {stats.recent.length === 0 ? (
-              <p className="text-sm text-muted-foreground text-center py-10">Chưa có lead nào</p>
-            ) : (
-              <div className="divide-y">
-                {stats.recent.map(lead => {
-                  const s = STATUS_MAP[lead.status] ?? { label: lead.status, variant: 'outline' as const }
-                  return (
-                    <div key={lead.id} className="flex items-center justify-between px-6 py-3">
-                      <div>
-                        <p className="text-sm font-medium">{lead.name}</p>
-                        <p className="text-xs text-muted-foreground">{lead.phone} · {lead.source}</p>
-                      </div>
-                      <Badge variant={s.variant}>{s.label}</Badge>
+          {stats.recent.length === 0 ? (
+            <p className="text-sm text-muted-foreground text-center py-12">Chưa có lead nào</p>
+          ) : (
+            <div className="divide-y">
+              {stats.recent.map(lead => {
+                const s = STATUS_MAP[lead.status] ?? { label: lead.status, variant: 'outline' as const }
+                return (
+                  <div key={lead.id} className="flex items-center justify-between px-5 py-3">
+                    <div>
+                      <p className="text-sm font-medium">{lead.name}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{lead.phone} · {lead.source}</p>
                     </div>
-                  )
-                })}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                    <Badge variant={s.variant}>{s.label}</Badge>
+                  </div>
+                )
+              })}
+            </div>
+          )}
+        </div>
       </div>
     </AdminLayout>
   )
