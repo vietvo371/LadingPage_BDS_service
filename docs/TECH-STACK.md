@@ -10,105 +10,94 @@ updated: 2026-06-02
 | Layer | Tech |
 |-------|------|
 | Framework | Next.js 14.2.3 (App Router) |
-| Styling | Tailwind CSS + shadcn/ui |
+| Styling | Tailwind CSS + shadcn/ui v4 (CLI install) |
+| Icons | lucide-react |
 | Animation | Framer Motion 11 |
-| DB | MySQL local (Prisma 6 + prisma-client-js) |
-| Auth | jose JWT + httpOnly cookie |
+| DB | MySQL local — `coastal_admin` (Prisma 6) |
+| Auth | jose JWT + httpOnly cookie (Edge-compatible) |
 | Deploy | Vercel (auto khi push main) |
-| Icons | Inline SVG |
 
-## Components
-
-```
-src/components/
-├── Header.tsx          ← Sticky, hamburger mobile
-├── GalleryMosaic.tsx   ← Full-width mosaic + Share/Like
-├── GalleryModal.tsx    ← Fullscreen, tabs, lightbox, form cuối
-├── PropertyMain.tsx    ← Giá, countdown, stats, description
-├── PropertySidebar.tsx ← Agent card, form liên hệ, sticky
-├── CountdownTimer.tsx  ← Đếm ngược đến 27/06/2026
-├── CounterStats.tsx    ← 4 số (93.9ha, 7100 tỷ, 14.4%, 1111+)
-├── ViewLikeCounter.tsx ← Lượt xem + Lưu → /api/stats
-├── LocationMap.tsx     ← Google Maps + tabs địa điểm
-├── PartnersStrip.tsx   ← Marquee logo đối tác
-├── ScrollReveal.tsx    ← Framer Motion fade-in wrapper
-├── FloatingActions.tsx ← "Nhận Báo Giá" + back-to-top
-└── Footer.tsx          ← Logo, contacts, QR Zalo
-```
-
-## API Routes
-
-### `/api/lead` — Form → Google Sheets
-```env
-NEXT_PUBLIC_GOOGLE_SHEETS_URL="https://script.google.com/macros/s/AKfycbxgGJ3VlmP6N0YuHjzyCyjCRsYFNXxa98bYCx17joyguZLLTdW7kD-_9shyzdl7qF5V/exec"
-```
-- Script mẫu: `docs/google-sheets-script.js`
-- Các form dùng: PropertySidebar, GalleryModal (sau 43 ảnh), ContactForm
-
-### `/api/stats` — Lượt xem / Lưu (Upstash Redis)
-```env
-UPSTASH_REDIS_REST_URL="https://close-adder-107638.upstash.io"
-UPSTASH_REDIS_REST_TOKEN="gQAAAAAAAaR2..."
-```
-- Keys: `coastal_views`, `coastal_likes`
-
-## SEO
-
-- Title: Coastal Quảng Ngãi — Khu Đô Thị Nghỉ Dưỡng Cao Cấp Ven Biển
-- BASE_URL: `https://coastal-quangngai.vn` *(đổi khi có domain thật)*
-- JSON-LD: RealEstateListing + Organization + WebSite
-- OG Image: `/public/og-image.jpg` (1200×630)
-
-## Admin Routes
+## Admin — Routes
 
 ```
-/admin/login      ← Login (jose JWT)
-/admin            ← Dashboard: stats leads
-/admin/leads      ← Bảng leads, filter, đổi status, export CSV
+/admin/login      ← Login form (shadcn Card + Input)
+/admin            ← Dashboard: 4 stat cards + leads gần đây
+/admin/leads      ← Table leads, filter, đổi status, export CSV
 /admin/settings   ← Sửa giá/hotline/countdown không cần deploy
 ```
 
+## Admin — Architecture
+
 ```
 src/
+├── middleware.ts                ← Bảo vệ /admin/* bằng jose jwtVerify (Edge)
 ├── lib/
-│   ├── auth.ts       ← jose signToken/verifyToken/getSession
-│   ├── prisma.ts     ← Prisma singleton với libsql adapter
-│   └── utils.ts      ← cn() helper
-├── middleware.ts      ← Bảo vệ /admin/* bằng JWT Edge-compatible
+│   ├── auth.ts                 ← jose signToken/verifyToken/getSession
+│   ├── prisma.ts               ← Prisma singleton (prisma-client-js, không adapter)
+│   └── utils.ts                ← cn() helper
+├── hooks/
+│   └── use-mobile.ts           ← shadcn sidebar hook
 ├── components/
-│   ├── ui/           ← shadcn: button, input, card, label
-│   └── admin/
-│       └── AdminSidebar.tsx
+│   ├── admin/
+│   │   ├── AdminLayout.tsx     ← "use client" — SidebarProvider + AdminSidebar + SidebarInset
+│   │   └── AdminSidebar.tsx    ← shadcn Sidebar với lucide icons, render prop cho Link
+│   └── ui/                     ← shadcn CLI: button, card, input, label, badge,
+│                                  table, sidebar, sheet, tooltip, skeleton, separator, avatar
 └── app/
     ├── admin/
-    │   ├── login/
-    │   ├── leads/
-    │   └── settings/
+    │   ├── layout.tsx          ← metadata noindex
+    │   ├── page.tsx            ← Server Component, prisma queries
+    │   ├── leads/page.tsx      ← Client Component
+    │   └── settings/page.tsx   ← Client Component
     └── api/
         ├── auth/login + logout
-        └── admin/leads + settings
+        ├── admin/leads + settings
+        └── lead/               ← Form → MySQL + Google Sheets song song
 ```
 
 ## DB (Prisma 6 + MySQL)
 
-- Local: `mysql://root@localhost:3306/coastal_admin`
-- Models: `User`, `Lead`, `Setting`
-- Seed: `npm run seed` → admin@coastal.vn / coastal2026
-- Dùng `prisma-client-js` — không cần adapter, giống chanan-clone
+```
+Host:    localhost:3306
+DB:      coastal_admin
+Tables:  User, Lead, Setting
+Seed:    npm run seed → admin@coastal.vn / coastal2026
+```
 
-## shadcn/ui (manual install — không dùng CLI)
+**Quan trọng:**
+- Prisma 6 dùng `prisma-client-js` — không cần driver adapter (khác Prisma 7)
+- URL trong cả `.env` (cho Prisma CLI) và `.env.local` (cho Next.js runtime)
+- `prisma.config.ts` chỉ dùng ở Prisma 7 — đã xóa
 
-Components trong `src/components/ui/`: button, input, card, label  
-CSS vars shadcn trong `globals.css`, Tailwind tokens trong `tailwind.config.ts`
+## shadcn/ui v4 — Lưu ý
+
+- Install bằng `npx shadcn@latest add <component>` — không copy tay
+- Button/Input dùng `@base-ui/react` — không có `asChild`, dùng `render` prop
+- Sidebar cần `SidebarProvider` ở Client Component (`AdminLayout.tsx`), không đặt trong Server Component
+- `SidebarMenuButton` dùng `render={<Link href="..." />}` thay vì `asChild`
+
+## Env vars
+
+```
+# .env (Prisma CLI)
+DATABASE_URL="mysql://root@localhost:3306/coastal_admin"
+
+# .env.local (Next.js runtime — không commit)
+DATABASE_URL="mysql://root@localhost:3306/coastal_admin"
+JWT_SECRET="coastal-secret-2026-change-in-prod"
+NEXT_PUBLIC_GOOGLE_SHEETS_URL="https://script.google.com/macros/s/..."
+UPSTASH_REDIS_REST_URL="https://close-adder-107638.upstash.io"
+UPSTASH_REDIS_REST_TOKEN="..."
+```
 
 ## Lệnh thường dùng
 
 ```bash
 npm run dev          # dev local
-npm run seed         # tạo admin user + default settings
+npm run seed         # tạo admin + default settings
 npm run build        # build check
-git push origin main # deploy (auto Vercel)
+git push origin main # deploy auto Vercel
 ```
 
 ---
-*Xem [[STATUS]] để biết tình trạng · [[ASSET-MAP]] cho cấu trúc ảnh*
+*Xem [[STATUS]] để biết tình trạng · [[ASSET-MAP]] cho cấu trúc ảnh · [[PROJECT-INFO]] cho nội dung*
