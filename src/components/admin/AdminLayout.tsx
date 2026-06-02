@@ -16,6 +16,7 @@ type UserSession = {
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false)
+  const [isCollapsed, setIsCollapsed] = useState(false)
   const [user, setUser] = useState<UserSession | null>(null)
 
   useEffect(() => {
@@ -35,10 +36,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <div className="flex min-h-screen bg-slate-50/40">
       {/* Desktop Sidebar (Fixed Left) */}
-      <AdminSidebar className="hidden lg:flex fixed top-0 left-0 bottom-0 w-64 z-40 h-screen" />
+      <AdminSidebar 
+        className={`hidden lg:flex fixed top-0 left-0 bottom-0 z-40 h-screen transition-all duration-300 ${isCollapsed ? 'w-20' : 'w-64'}`} 
+        isCollapsed={isCollapsed}
+        setIsCollapsed={setIsCollapsed}
+      />
 
       {/* Main Panel Content Wrapper */}
-      <div className="flex-1 flex flex-col lg:pl-64 min-w-0">
+      <div className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${isCollapsed ? 'lg:pl-20' : 'lg:pl-64'}`}>
         
         {/* Responsive Sticky Header */}
         <header className="h-16 bg-white/80 backdrop-blur-md border-b border-slate-200/60 sticky top-0 z-30 flex items-center px-6 md:px-8 justify-between">

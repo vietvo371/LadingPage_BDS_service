@@ -35,29 +35,7 @@ const PREVIEW_ALL = [
   '/images/ngoai-that/phoi-canh-tong-the.jpg',
 ]
 
-const AMENITIES = [
-  { cat: 'Sinh Hoạt Cộng Đồng', items: ['Điểm ngắm hoàng hôn','Công viên rừng ngập mặn','Khu vui chơi thám hiểm rừng','Đường dạo ven biển – ven sông','Công viên gia đình, làng chài','Vườn dom đóm, Công viên sinh vật học'] },
-  { cat: 'Thể Thao & Giải Trí', items: ['Resort 5 sao','Design Exhibition','Trung tâm chăm sóc sức khoẻ','Công viên thể thao ven sông','Gym, yoga, sân tennis đa năng'] },
-  { cat: 'Thương Mại Dịch Vụ', items: ['Quảng trường biển','Quảng trường chợ nổi','Phố mua sắm ẩm thực','Trường liên cấp quốc tế','An ninh camera 24/7'] },
-]
-
-function AmenityGroup({ cat, items }: { cat: string; items: string[] }) {
-  return (
-    <div>
-      <p className="text-[13px] font-semibold text-[#e06f46] uppercase tracking-wide mb-3">{cat}</p>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
-        {items.map(item => (
-          <div key={item} className="flex items-start gap-2 text-[13px] text-[#444]">
-            <svg className="w-4 h-4 text-[#e06f46] flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-            </svg>
-            {item}
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
+// Amenities logic moved to rich text editor
 
 export default function PropertyMain() {
   const settings = useSettings()
@@ -230,49 +208,18 @@ export default function PropertyMain() {
             {settings.about_desc}
           </p>
 
-          <div>
-            <p className="font-semibold text-[#1a1a1a] mb-2">Quy Mô Tầm Cỡ – Khắc Họa Biểu Tượng Mới</p>
-            <p className="mb-3">Được quy hoạch bài bản để trở thành một quần thể đô thị đồng bộ và đẳng cấp, Coastal Quảng Ngãi (Haus Coastal Quảng Ngãi) gây ấn tượng mạnh mẽ bởi những con số biết nói:</p>
-            <ul className="space-y-2 pl-4">
-              {[
-                ['Tổng diện tích', `Lên đến ${settings.area_ha} ha`],
-                ['Tổng vốn đầu tư', `Hơn ${settings.total_investment} tỷ đồng – minh chứng rõ nét cho tầm vóc và tiềm lực vững chắc của dự án`],
-                ['Mật độ xây dựng', `Chỉ khoảng ${settings.density}%. Phần lớn quỹ đất dành cho cảnh quan xanh, mặt nước và tiện ích độc quyền`],
-                ['Bộ sưu tập sản phẩm', `Cung cấp gần hơn khoảng ${settings.total_units} sản phẩm đa dạng — Shophouse thương mại, Biệt thự song trung, Liên kề và Căn hộ cao tầng`],
-              ].map(([k, v]) => (
-                <li key={k} className="flex gap-2">
-                  <span className="text-[#e06f46] mt-1 flex-shrink-0">•</span>
-                  <span><strong>{k}:</strong> {v}.</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Expandable: Giải Mã Sức Hút */}
-          <div className={`relative overflow-hidden transition-all duration-500 ${showMore ? '' : 'max-h-0'}`}>
-            <div className="space-y-4">
-              <div>
-                <p className="font-semibold text-[#1a1a1a] mb-3">Giải Mã Sức Hút Của Coastal Quảng Ngãi:</p>
-                <div className="space-y-3">
-                  {[
-                    ['1. Vị Trí Kim Cương – Kết Nối Tinh Hoa', 'Kết nối trực tiếp đến bờ biển Mỹ Khê tuyệt đẹp và trung tâm TP. Quảng Ngãi thông qua Cầu Cửa Đại. Không chỉ mở ra không gian sống như một khu nghỉ dưỡng tại gia mà còn là thỏi nam châm thu hút dòng chảy giao thương mạnh mẽ.'],
-                    ['2. Không Gian Sống Chất Lành', 'Với mật độ xây dựng cực thấp, Coastal Quảng Ngãi kiến tạo một màng xanh không lây ngay cửa biển. Giúp cư dân tận hưởng bầu không khí trong lành, tách biệt khỏi ồn ào khói bụi nhưng vẫn kết nối nhịp sống tiện nghi.'],
-                    ['3. Bảo Chứng Đầu Tư – Pháp Lý Vững Chắc', 'Giữa những biến động của thị trường, dự án mang đến an tâm tuyệt đối với sổ đỏ sở hữu lâu dài. Không chỉ là nơi an cư lý tưởng mà còn là "tài sản truyền đời".'],
-                    ['4. Chính Sách Bán Hàng Ưu Việt', 'Các chính sách thanh toán ưu đãi từ Chủ đầu tư, hỗ trợ hợp đồng điều dụng, hạn mức mang đến những đặc quyền tối ưu và dễ dàng nhất cho nhà đầu tư tiềm năng.'],
-                  ].map(([title, content]) => (
-                    <div key={title as string}>
-                      <p className="font-medium text-[#1a1a1a]">{title}</p>
-                      <p className="text-[#555] mt-1">{content}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <p className="font-medium text-[#e06f46] italic">
-                Coastal Quảng Ngãi – Không chỉ là nơi để trở về, mà còn là di sản kiêu hãnh định riêng cho cộng đồng tinh hoa!
-              </p>
+          {/* Dynamic Property Info (Rich Text) */}
+          {settings.property_info_html && (
+            <div className={`relative overflow-hidden transition-all duration-700 ${showMore ? 'max-h-[3000px]' : 'max-h-[250px]'}`}>
+              <div 
+                className="prose prose-sm max-w-none prose-slate prose-p:leading-relaxed prose-a:text-[#e06f46] prose-strong:text-[#1a1a1a] prose-ul:pl-4 prose-li:marker:text-[#e06f46]"
+                dangerouslySetInnerHTML={{ __html: settings.property_info_html }}
+              />
+              {!showMore && (
+                <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
+              )}
             </div>
-          </div>
+          )}
 
           {/* Nút Xem thêm / Thu gọn */}
           <button
@@ -303,29 +250,34 @@ export default function PropertyMain() {
       <div id="tien-ich" className="border-t border-[#e5e5e5] pt-8 mb-8">
         <h2 className="text-xl font-bold text-[#1a1a1a] mb-6">Tiện Ích Dự Án</h2>
         <div className="space-y-6">
-          {/* Category đầu tiên luôn hiển thị */}
-          <AmenityGroup cat={AMENITIES[0].cat} items={AMENITIES[0].items} />
-
-          {/* Các category còn lại — toggle */}
-          <div className={`space-y-6 overflow-hidden transition-all duration-500 ${showMoreTienIch ? '' : 'max-h-0'}`}>
-            {AMENITIES.slice(1).map(({ cat, items }) => (
-              <AmenityGroup key={cat} cat={cat} items={items} />
-            ))}
-          </div>
+          {/* Dynamic Amenities (Rich Text) */}
+          {settings.amenities_html && (
+            <div className={`relative overflow-hidden transition-all duration-700 ${showMoreTienIch ? 'max-h-[3000px]' : 'max-h-[250px]'}`}>
+              <div 
+                className="prose prose-sm max-w-none prose-slate prose-p:leading-relaxed prose-a:text-[#e06f46] prose-strong:text-[#e06f46] prose-strong:uppercase prose-strong:tracking-wide prose-ul:pl-4 prose-li:marker:text-[#e06f46]"
+                dangerouslySetInnerHTML={{ __html: settings.amenities_html }}
+              />
+              {!showMoreTienIch && (
+                <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
+              )}
+            </div>
+          )}
 
           {/* Nút Xem thêm */}
-          <button
-            onClick={() => setShowMoreTienIch(v => !v)}
-            className="flex items-center gap-2 text-[13px] font-semibold text-[#e06f46] hover:text-[#c45a33] transition-colors mt-2"
-          >
-            <span>{showMoreTienIch ? 'Thu gọn' : 'Xem thêm tiện ích'}</span>
-            <svg
-              className={`w-4 h-4 transition-transform duration-300 ${showMoreTienIch ? 'rotate-180' : ''}`}
-              fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}
+          {settings.amenities_html && (
+            <button
+              onClick={() => setShowMoreTienIch(v => !v)}
+              className="flex items-center gap-2 text-[13px] font-semibold text-[#e06f46] hover:text-[#c45a33] transition-colors mt-2"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
+              <span>{showMoreTienIch ? 'Thu gọn' : 'Xem thêm tiện ích'}</span>
+              <svg
+                className={`w-4 h-4 transition-transform duration-300 ${showMoreTienIch ? 'rotate-180' : ''}`}
+                fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+          )}
         </div>
       </div>
       </ScrollReveal>
