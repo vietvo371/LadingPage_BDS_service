@@ -8,14 +8,19 @@ import { Separator } from '@/components/ui/separator'
 import { Button } from '@/components/ui/button'
 import { Users, PhoneCall, CheckCircle2, TrendingUp, ExternalLink, Calendar } from 'lucide-react'
 
-async function getStats() {
+async function getStats(brokerId: number) {
+  const where = { brokerId }
   const [total, newLeads, called, closed] = await Promise.all([
-    prisma.lead.count(),
-    prisma.lead.count({ where: { status: 'NEW' } }),
-    prisma.lead.count({ where: { status: 'CALLED' } }),
-    prisma.lead.count({ where: { status: 'CLOSED' } }),
+    prisma.lead.count({ where }),
+    prisma.lead.count({ where: { ...where, status: 'NEW' } }),
+    prisma.lead.count({ where: { ...where, status: 'CALLED' } }),
+    prisma.lead.count({ where: { ...where, status: 'CLOSED' } }),
   ])
-  const recent = await prisma.lead.findMany({ orderBy: { createdAt: 'desc' }, take: 6 })
+  const recent = await prisma.lead.findMany({
+    where,
+    orderBy: { createdAt: 'desc' },
+    take: 6,
+  })
   return { total, newLeads, called, closed, recent }
 }
 
@@ -41,7 +46,13 @@ function getAvatarColor(name: string) {
 export default async function AdminDashboard() {
   const session = await getSession()
   if (!session) redirect('/admin/login')
-  const stats = await getStats()
+
+  // MASTER xem site hiện tại theo BROKER_ID env, BROKER xem site của mình
+  const brokerId = session.role === 'MASTER'
+    ? Number(process.env.BROKER_ID ?? 1)
+    : (session.brokerId ?? 1)
+
+  const stats = await getStats(brokerId)
 
   const cards = [
     { 
