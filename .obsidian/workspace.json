@@ -4,17 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "ef7cc58ac47ecc19",
+        "id": "89c7e8595429ae57",
         "type": "tabs",
         "children": [
           {
-            "id": "68d53a4b01a155a2",
+            "id": "0cd37d33c2a26233",
             "type": "leaf",
             "state": {
-              "type": "empty",
+              "type": "graph",
               "state": {},
-              "icon": "lucide-file",
-              "title": "Tab mới"
+              "icon": "lucide-git-fork",
+              "title": "Xem biểu đồ"
             }
           }
         ]
@@ -176,8 +176,11 @@
       "bases:Tạo cơ sở mới": false
     }
   },
-  "active": "68d53a4b01a155a2",
+  "active": "0cd37d33c2a26233",
   "lastOpenFiles": [
+    "node_modules/fast-string-width/readme.md",
+    "node_modules/ms/license.md",
+    "docs/Deploy-NextJS-CyberPanel.md",
     "node_modules/styled-jsx/license.md"
   ]
 }
