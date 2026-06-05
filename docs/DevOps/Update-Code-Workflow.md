@@ -53,6 +53,22 @@ export NVM_DIR="$HOME/.nvm" && source "$NVM_DIR/nvm.sh" && cd ~/public_html/Ladi
 
 ---
 
+## 🌱 Seed Database — CHỈ KHI ĐƯỢC YÊU CẦU
+
+> ⚠️ **KHÔNG chạy seed trong quy trình update bình thường!**
+> Chỉ chạy khi:
+> - Deploy lần đầu tiên (database còn trống)
+> - Được yêu cầu rõ ràng: *"cần seed lại"*
+
+```bash
+npx tsx prisma/seed.ts
+```
+
+**Tại sao không chạy tự động?**
+Khách đã thêm leads, sửa settings qua admin panel → seed sẽ **reset settings về default** dù đã fix `update: {}`, vẫn tiềm ẩn rủi ro.
+
+---
+
 ## ⚠️ Lưu Ý Quan Trọng
 
 - **Phải rebuild** sau mỗi lần `git pull` — không rebuild là app chạy code cũ
