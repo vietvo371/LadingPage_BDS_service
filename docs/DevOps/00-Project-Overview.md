@@ -40,22 +40,33 @@ TẦNG 3 — Master Admin (chỉ Trung)
 
 ## III. 2 Git Repositories
 
-### Repo 1 — Landing Page + Site Admin
+### Folder Tổng (local)
+```
+/Volumes/MAC_OPTION/TrungDigitalMedia/
+├── landing-template/    ← SOURCE CODE template (git: LadingPage_BDS_service)
+├── master-admin/        ← Master Admin (git: Master-Admin-BDS)
+└── sites/               ← Mỗi môi giới = 1 subfolder clone từ landing-template
+    ├── coastal/         ← BROKER_ID=1, PORT=3005
+    └── suckhoetaman/    ← BROKER_ID=2, PORT=3001
+```
+
+### Repo 1 — Landing Page + Site Admin (template)
 ```
 github.com/vietvo371/LadingPage_BDS_service
-Local: /Volumes/MAC_OPTION/Build_Ladingpage
+Local: /Volumes/MAC_OPTION/TrungDigitalMedia/landing-template
 
 Branch:
-  main     ← Production
+  main     ← Production (stable)
   develop  ← Đang phát triển (CHƯA merge main)
 
-Deploy: Mỗi môi giới = 1 lần clone repo này với BROKER_ID khác nhau
+Quy tắc: KHÔNG clone trực tiếp repo này lên server
+         → Mỗi site = git clone riêng vào sites/<tên>/
 ```
 
 ### Repo 2 — Master Admin
 ```
 github.com/vietvo371/Master-Admin-BDS
-Local: /Volumes/MAC_OPTION/master-admin-bds
+Local: /Volumes/MAC_OPTION/TrungDigitalMedia/master-admin
 
 Branch: main
 
@@ -255,15 +266,18 @@ BƯỚC 4: Verify domain Resend
 ## XII. Local Dev
 
 ```bash
-# Repo 1 — Landing Page
-cd /Volumes/MAC_OPTION/Build_Ladingpage
+# Template / Landing Page dev
+cd /Volumes/MAC_OPTION/TrungDigitalMedia/landing-template
 npm run dev   → http://localhost:3000
 # Đăng nhập site admin: admin@coastal.vn / coastal2026
 
-# Repo 2 — Master Admin
-cd /Volumes/MAC_OPTION/master-admin-bds
+# Master Admin
+cd /Volumes/MAC_OPTION/TrungDigitalMedia/master-admin
 PORT=4000 npm run dev   → http://localhost:4000
 # Đăng nhập: master@trungdigitalmedia.com / master2026@TDM
+
+# Xem tất cả sites
+ls /Volumes/MAC_OPTION/TrungDigitalMedia/sites/
 ```
 
 ---

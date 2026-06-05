@@ -2,9 +2,24 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## ⚠️ Đọc Trước — Folder Structure
+
+```
+/Volumes/MAC_OPTION/TrungDigitalMedia/
+├── landing-template/   ← BẠN ĐANG Ở ĐÂY — SOURCE CODE template
+├── master-admin/       ← Master Admin dashboard (repo riêng)
+└── sites/              ← Mỗi môi giới = 1 clone từ repo này
+    ├── coastal/        ← BROKER_ID=1, PORT=3005
+    └── suckhoetaman/   ← BROKER_ID=2, PORT=3001
+```
+
+Tài liệu đầy đủ: `docs/DevOps/00-Project-Overview.md`
+
+---
+
 ## Project Overview
 
-**Coastal QN Showcase** — a Vietnamese real estate landing page for the "Coastal Quảng Ngãi" (Haus Coastal) project, with a full-featured admin panel for managing content, leads, and settings. Built with Next.js 14 App Router, Prisma (MySQL), and shadcn/ui.
+**Trung Digital Media — BDS Landing Page Template** — Template Next.js cho chuỗi landing page bất động sản. Mỗi môi giới được clone 1 instance riêng với `BROKER_ID` khác nhau. Multi-tenant MySQL DB. Built with Next.js 14 App Router, Prisma (MySQL), and shadcn/ui.
 
 ## Commands
 
