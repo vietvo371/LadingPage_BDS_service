@@ -172,7 +172,7 @@ async function main() {
   for (const s of defaults) {
     await prisma.setting.upsert({
       where: { key: s.key },
-      update: { value: s.value }, // Always force update to the latest seed copy to refresh the database
+      update: {}, // Không overwrite — chỉ tạo mới nếu chưa có
       create: s,
     })
   }
