@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { sendLeadNotification } from '@/lib/email'
 
 export async function POST(request: Request) {
   try {
@@ -9,7 +10,7 @@ export async function POST(request: Request) {
     // Lấy brokerId từ env — mỗi site set BROKER_ID riêng trong .env
     const brokerId = Number(process.env.BROKER_ID ?? 1)
 
-    // Lưu vào DB
+    // 1. Lưu lead vào DB
     await prisma.lead.create({
       data: {
         brokerId,
@@ -21,7 +22,26 @@ export async function POST(request: Request) {
       },
     })
 
-    // Đồng thời gửi Google Sheets nếu có env
+    // 2. Gửi email thông báo cho môi giới (fire-and-forget, không block response)
+    prisma.broker.findUnique({ where: { id: brokerId } })
+      .then(broker => {
+        if (!broker?.notifyEmail) return
+        const now = new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' })
+        return sendLeadNotification({
+          brokerName: broker.name,
+          brokerEmail: broker.notifyEmail,
+          projectName: broker.domain,
+          leadName: name || 'Không rõ',
+          leadPhone: phone || '',
+          leadEmail: email,
+          leadMessage: message,
+          source: source || 'unknown',
+          submittedAt: now,
+        })
+      })
+      .catch(err => console.error('Email notification error:', err))
+
+    // 3. Gửi Google Sheets nếu có env
     const sheetUrl = process.env.NEXT_PUBLIC_GOOGLE_SHEETS_URL
     if (sheetUrl) {
       fetch(sheetUrl, {
