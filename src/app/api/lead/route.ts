@@ -6,9 +6,13 @@ export async function POST(request: Request) {
     const data = await request.json()
     const { name, phone, email, message, source } = data
 
+    // Lấy brokerId từ env — mỗi site set BROKER_ID riêng trong .env
+    const brokerId = Number(process.env.BROKER_ID ?? 1)
+
     // Lưu vào DB
     await prisma.lead.create({
       data: {
+        brokerId,
         name: name || 'Không rõ',
         phone: phone || '',
         email: email || null,

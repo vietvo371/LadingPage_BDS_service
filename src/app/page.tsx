@@ -10,7 +10,8 @@ import { prisma }      from '@/lib/prisma'
 import { SettingsProvider } from '@/components/SettingsProvider'
 
 export default async function Home() {
-  const settingsList = await prisma.setting.findMany().catch(() => [])
+  const brokerId = Number(process.env.BROKER_ID ?? 1)
+  const settingsList = await prisma.setting.findMany({ where: { brokerId } }).catch(() => [])
   const settings = settingsList.reduce((acc, s) => ({ ...acc, [s.key]: s.value }), {} as Record<string, string>)
 
   return (

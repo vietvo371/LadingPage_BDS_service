@@ -9,7 +9,8 @@ export const COOKIE_NAME = 'coastal_admin_token'
 export interface JwtPayload {
   userId: number
   email: string
-  role: string
+  role: string       // 'MASTER' | 'BROKER'
+  brokerId: number | null
 }
 
 export async function signToken(payload: JwtPayload): Promise<string> {

@@ -21,7 +21,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Email hoặc mật khẩu không đúng' }, { status: 401 })
     }
 
-    const token = await signToken({ userId: user.id, email: user.email, role: user.role })
+    const token = await signToken({
+      userId: user.id,
+      email: user.email,
+      role: user.role,
+      brokerId: user.brokerId ?? null,
+    })
 
     const response = NextResponse.json({ success: true })
     response.cookies.set(COOKIE_NAME, token, {
