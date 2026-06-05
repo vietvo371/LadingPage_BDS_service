@@ -7,17 +7,38 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Broker {
+  id          Int       @id @default(autoincrement())
+  name        String    @db.VarChar(100)
+  phone       String    @db.VarChar(20)
+  domain      String    @unique @db.VarChar(255)
+  template    String    @default("mau-1") @db.VarChar(20)
+  status      String    @default("ACTIVE") @db.VarChar(20) // ACTIVE | PAUSED | EXPIRED
+  activatedAt DateTime  @default(now())
+  expiredAt   DateTime
+  notifyEmail String?   @db.VarChar(255)
+  leads       Lead[]
+  settings    Setting[]
+  users       User[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
 model User {
   id        Int      @id @default(autoincrement())
+  brokerId  Int?                                           // NULL = Master Admin
+  broker    Broker?  @relation(fields: [brokerId], references: [id])
   email     String   @unique @db.VarChar(255)
   password  String   @db.VarChar(255)
   name      String   @default("Admin") @db.VarChar(100)
-  role      String   @default("ADMIN") @db.VarChar(20)
+  role      String   @default("BROKER") @db.VarChar(20)   // MASTER | BROKER
   createdAt DateTime @default(now())
 }
 
 model Lead {
   id        Int      @id @default(autoincrement())
+  brokerId  Int
+  broker    Broker   @relation(fields: [brokerId], references: [id])
   name      String   @db.VarChar(100)
   phone     String   @db.VarChar(20)
   email     String?  @db.VarChar(255)
@@ -30,7 +51,12 @@ model Lead {
 }
 
 model Setting {
-  key       String   @id @db.VarChar(100)
+  id        Int      @id @default(autoincrement())
+  brokerId  Int
+  broker    Broker   @relation(fields: [brokerId], references: [id])
+  key       String   @db.VarChar(100)
   value     String   @db.Text
   updatedAt DateTime @updatedAt
+
+  @@unique([brokerId, key])
 }
