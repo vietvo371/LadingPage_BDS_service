@@ -25,7 +25,11 @@ export async function POST(request: Request) {
     // 2. Gửi email thông báo cho môi giới (fire-and-forget, không block response)
     prisma.broker.findUnique({ where: { id: brokerId } })
       .then(broker => {
-        if (!broker?.notifyEmail) return
+        if (!broker?.notifyEmail) {
+          console.log(`[Email] Broker ${brokerId} không có notifyEmail — bỏ qua`)
+          return
+        }
+        console.log(`[Email] Gửi đến ${broker.notifyEmail}...`)
         const now = new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' })
         return sendLeadNotification({
           brokerName: broker.name,
@@ -39,7 +43,8 @@ export async function POST(request: Request) {
           submittedAt: now,
         })
       })
-      .catch(err => console.error('Email notification error:', err))
+      .then(() => console.log('[Email] Gửi thành công!'))
+      .catch(err => console.error('[Email] Lỗi:', err))
 
     // 3. Gửi Google Sheets nếu có env
     const sheetUrl = process.env.NEXT_PUBLIC_GOOGLE_SHEETS_URL

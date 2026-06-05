@@ -23,7 +23,9 @@ export async function sendLeadNotification(data: LeadNotificationData) {
   const { brokerName, brokerEmail, projectName, leadName, leadPhone, leadEmail, leadMessage, source, submittedAt } = data
 
   await resend.emails.send({
-    from: 'Hệ Thống Lead <noreply@trungdigitalmedia.com>',
+    // TODO: Sau khi verify domain trungdigitalmedia.com trên Resend → đổi lại
+    // from: 'Hệ Thống Lead <noreply@trungdigitalmedia.com>',
+    from: 'Hệ Thống Lead <onboarding@resend.dev>',
     to: brokerEmail,
     subject: `🔥 Khách hàng mới: ${leadName} — ${projectName}`,
     html: `
