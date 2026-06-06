@@ -2,13 +2,18 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { sendLeadNotification } from '@/lib/email'
 
+import { getCurrentBroker } from '@/lib/currentBroker'
+
 export async function POST(request: Request) {
   try {
     const data = await request.json()
     const { name, phone, email, message, source } = data
 
-    // Lấy brokerId từ env — mỗi site set BROKER_ID riêng trong .env
-    const brokerId = Number(process.env.BROKER_ID ?? 1)
+    const broker = await getCurrentBroker()
+    if (!broker) {
+      return NextResponse.json({ success: false, error: 'Broker not found' }, { status: 404 })
+    }
+    const brokerId = broker.id
 
     // 1. Lưu lead vào DB
     await prisma.lead.create({

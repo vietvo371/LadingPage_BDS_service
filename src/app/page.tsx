@@ -9,9 +9,21 @@ import ScrollReveal    from '@/components/ScrollReveal'
 import { prisma }      from '@/lib/prisma'
 import { SettingsProvider } from '@/components/SettingsProvider'
 
+import { getCurrentBroker } from '@/lib/currentBroker'
+import { notFound } from 'next/navigation'
+
 export default async function Home() {
-  const brokerId = Number(process.env.BROKER_ID ?? 1)
-  const settingsList = await prisma.setting.findMany({ where: { brokerId } }).catch(() => [])
+  const broker = await getCurrentBroker()
+  
+  if (!broker || broker.status !== 'ACTIVE' || new Date() > broker.expiredAt) {
+    return (
+      <div className="flex items-center justify-center min-h-screen text-slate-500">
+        Website không tồn tại hoặc đã tạm ngừng hoạt động.
+      </div>
+    )
+  }
+
+  const settingsList = await prisma.setting.findMany({ where: { brokerId: broker.id } }).catch(() => [])
   const settings = settingsList.reduce((acc, s) => ({ ...acc, [s.key]: s.value }), {} as Record<string, string>)
 
   return (

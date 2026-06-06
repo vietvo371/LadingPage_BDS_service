@@ -2,12 +2,17 @@ import { NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
-function getBrokerFilter(session: { role: string; brokerId: number | null }) {
+import { getCurrentBroker } from '@/lib/currentBroker'
+
+async function getBrokerFilter(session: { role: string; brokerId: number | null }) {
+  // MASTER xem leads của site hiện tại (dựa vào domain)
   // BROKER chỉ thấy leads của mình
-  // MASTER thấy tất cả (không filter)
-  return session.role === 'BROKER' && session.brokerId
-    ? { brokerId: session.brokerId }
-    : {}
+  if (session.role === 'MASTER') {
+    const broker = await getCurrentBroker()
+    return broker ? { brokerId: broker.id } : {}
+  }
+  // Bảo mật tuyệt đối: Nếu là BROKER mà ko có ID thì chặn luôn (gán id = -1 để mảng rỗng)
+  return session.brokerId ? { brokerId: session.brokerId } : { brokerId: -1 }
 }
 
 export async function GET() {
@@ -15,7 +20,7 @@ export async function GET() {
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const leads = await prisma.lead.findMany({
-    where: getBrokerFilter(session),
+    where: await getBrokerFilter(session),
     orderBy: { createdAt: 'desc' },
   })
   return NextResponse.json(leads)
@@ -29,7 +34,7 @@ export async function PATCH(request: Request) {
 
   // Kiểm tra lead có thuộc broker này không
   const lead = await prisma.lead.findFirst({
-    where: { id, ...getBrokerFilter(session) },
+    where: { id, ...(await getBrokerFilter(session)) },
   })
   if (!lead) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
@@ -49,7 +54,7 @@ export async function DELETE(request: Request) {
 
     // Kiểm tra lead có thuộc broker này không
     const lead = await prisma.lead.findFirst({
-      where: { id: Number(id), ...getBrokerFilter(session) },
+      where: { id: Number(id), ...(await getBrokerFilter(session)) },
     })
     if (!lead) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 

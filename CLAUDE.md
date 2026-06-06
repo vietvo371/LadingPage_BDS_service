@@ -6,11 +6,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```
 /Volumes/MAC_OPTION/TrungDigitalMedia/
-├── landing-template/   ← BẠN ĐANG Ở ĐÂY — SOURCE CODE template
+├── landing-template/   ← BẠN ĐANG Ở ĐÂY — 1 instance phục vụ TẤT CẢ môi giới
 ├── master-admin/       ← Master Admin dashboard (repo riêng)
-└── sites/              ← Mỗi môi giới = 1 clone từ repo này
-    ├── coastal/        ← BROKER_ID=1, PORT=3005
-    └── suckhoetaman/   ← BROKER_ID=2, PORT=3001
+└── sites/              ← CŨ / DEPRECATED — không dùng nữa
 ```
 
 Tài liệu đầy đủ: `docs/DevOps/00-Project-Overview.md`
@@ -19,7 +17,7 @@ Tài liệu đầy đủ: `docs/DevOps/00-Project-Overview.md`
 
 ## Project Overview
 
-**Trung Digital Media — BDS Landing Page Template** — Template Next.js cho chuỗi landing page bất động sản. Mỗi môi giới được clone 1 instance riêng với `BROKER_ID` khác nhau. Multi-tenant MySQL DB. Built with Next.js 14 App Router, Prisma (MySQL), and shadcn/ui.
+**Trung Digital Media — BDS Landing Page** — Next.js multi-tenant SaaS cho chuỗi landing page bất động sản. **1 instance duy nhất** phục vụ tất cả môi giới — broker được nhận diện qua **domain của request** (không còn BROKER_ID). Multi-tenant MySQL DB. Built with Next.js 14 App Router, Prisma (MySQL), and shadcn/ui.
 
 ## Commands
 

@@ -1,16 +1,19 @@
 import { NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { getCurrentBroker } from '@/lib/currentBroker'
 
 export async function GET() {
   const session = await getSession()
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  // MASTER thấy tất cả (dùng BROKER_ID từ env để xác định site)
+  // MASTER thấy tất cả (dùng domain để xác định site đang sửa)
   // BROKER chỉ thấy settings của mình
-  const brokerId = session.role === 'MASTER'
-    ? Number(process.env.BROKER_ID ?? 1)
-    : session.brokerId
+  let brokerId = session.brokerId
+  if (session.role === 'MASTER') {
+    const broker = await getCurrentBroker()
+    if (broker) brokerId = broker.id
+  }
 
   if (!brokerId) return NextResponse.json({ error: 'Broker not found' }, { status: 400 })
 
@@ -24,9 +27,11 @@ export async function POST(request: Request) {
   const session = await getSession()
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const brokerId = session.role === 'MASTER'
-    ? Number(process.env.BROKER_ID ?? 1)
-    : session.brokerId
+  let brokerId = session.brokerId
+  if (session.role === 'MASTER') {
+    const broker = await getCurrentBroker()
+    if (broker) brokerId = broker.id
+  }
 
   if (!brokerId) return NextResponse.json({ error: 'Broker not found' }, { status: 400 })
 

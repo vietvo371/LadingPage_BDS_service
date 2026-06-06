@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { Redis } from '@upstash/redis'
+import { getCurrentBroker } from '@/lib/currentBroker'
 
 const redis = process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
   ? new Redis({
@@ -13,13 +14,16 @@ const FAKE_VIEWS = 1248
 const FAKE_LIKES = 87
 
 export async function GET() {
+  const broker = await getCurrentBroker()
+  const prefix = broker ? broker.id : 'default'
+
   if (!redis) {
     return NextResponse.json({ views: FAKE_VIEWS, likes: FAKE_LIKES })
   }
 
   try {
-    const views = await redis.get('coastal_views') || FAKE_VIEWS
-    const likes = await redis.get('coastal_likes') || FAKE_LIKES
+    const views = await redis.get(`${prefix}_views`) || FAKE_VIEWS
+    const likes = await redis.get(`${prefix}_likes`) || FAKE_LIKES
 
     return NextResponse.json({
       views: Number(views),
@@ -34,6 +38,9 @@ export async function GET() {
 export async function POST(request: Request) {
   const { searchParams } = new URL(request.url)
   const action = searchParams.get('action')
+  
+  const broker = await getCurrentBroker()
+  const prefix = broker ? broker.id : 'default'
 
   if (!redis) {
     return NextResponse.json({ success: true, fake: true })
@@ -42,11 +49,11 @@ export async function POST(request: Request) {
   try {
     let result = 0
     if (action === 'view') {
-      result = await redis.incr('coastal_views')
+      result = await redis.incr(`${prefix}_views`)
     } else if (action === 'like') {
-      result = await redis.incr('coastal_likes')
+      result = await redis.incr(`${prefix}_likes`)
     } else if (action === 'unlike') {
-      result = await redis.decr('coastal_likes')
+      result = await redis.decr(`${prefix}_likes`)
     } else {
       return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
     }

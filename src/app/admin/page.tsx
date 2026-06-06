@@ -43,14 +43,18 @@ function getAvatarColor(name: string) {
   return colors[index]
 }
 
+import { getCurrentBroker } from '@/lib/currentBroker'
+
 export default async function AdminDashboard() {
   const session = await getSession()
   if (!session) redirect('/admin/login')
 
-  // MASTER xem site hiện tại theo BROKER_ID env, BROKER xem site của mình
-  const brokerId = session.role === 'MASTER'
-    ? Number(process.env.BROKER_ID ?? 1)
-    : (session.brokerId ?? 1)
+  // MASTER xem site hiện tại theo domain, BROKER xem site của mình
+  let brokerId = session.brokerId ?? 1
+  if (session.role === 'MASTER') {
+    const broker = await getCurrentBroker()
+    if (broker) brokerId = broker.id
+  }
 
   const stats = await getStats(brokerId)
 
