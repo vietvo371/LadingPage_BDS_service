@@ -1,6 +1,9 @@
 import { Resend } from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+// Lazy init — tránh crash lúc build khi RESEND_API_KEY chưa có
+function getResend() {
+  return new Resend(process.env.RESEND_API_KEY || 'placeholder')
+}
 
 interface LeadNotificationData {
   brokerName: string
@@ -22,7 +25,7 @@ export async function sendLeadNotification(data: LeadNotificationData) {
 
   const { brokerName, brokerEmail, projectName, leadName, leadPhone, leadEmail, leadMessage, source, submittedAt } = data
 
-  await resend.emails.send({
+  await getResend().emails.send({
     // TODO: Sau khi verify domain trungdigitalmedia.com trên Resend → đổi lại
     // from: 'Hệ Thống Lead <noreply@trungdigitalmedia.com>',
     from: 'Hệ Thống Lead <onboarding@resend.dev>',
